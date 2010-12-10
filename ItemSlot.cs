@@ -128,7 +128,7 @@ namespace INVedit
 			base.OnPaint(e);
 			
 			Graphics g = e.Graphics;
-			if (Selected) g.DrawRectangle(new Pen(Color.Black), 4, 4, Width-9, Height-9);
+			if (Selected) using (Pen pen = new Pen(Color.Black)) { g.DrawRectangle(pen, 4, 4, Width-9, Height-9); }
 			
 			Image image = Default;
 			if (Item != null) image = Item.Image;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
@@ -11,7 +12,7 @@ namespace INVedit
 	internal static class Data
 	{
 		static readonly Dictionary<string, Image> images = new Dictionary<string, Image>();
-		public static readonly ImageList list = new ImageList();
+		public static readonly ImageList list = new ImageList(){ ColorDepth = ColorDepth.Depth32Bit };
 		public static readonly Dictionary<short, Item> items = new Dictionary<short, Item>();
 		public static readonly Dictionary<string, Group> groups = new Dictionary<string, Group>();
 		public static Image unknown;
@@ -97,9 +98,11 @@ namespace INVedit
 		static Image LoadImage(string path)
 		{
 			if (images.ContainsKey(path)) return images[path];
-			Image image = Image.FromFile(path, true);
-			images[path] = image;
-			return image;
+			using (Bitmap bmp = new Bitmap(path)) {
+				Image image = new Bitmap(bmp);
+				images[path] = image;
+				return image;
+			}
 		}
 		
 		internal class Item

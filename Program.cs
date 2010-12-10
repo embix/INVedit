@@ -4,6 +4,10 @@ using System.IO;
 using System.Threading;
 using System.Diagnostics;
 
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+
 namespace INVedit
 {
 	class Program
@@ -11,29 +15,21 @@ namespace INVedit
 		[STAThread]
 		static void Main(string[] args)
 		{
-			if (args.Length > 0) {
-				if (args[0] == "-update") {
-					Thread.Sleep(100);
-					bool finish = false;
-					for (int i = 1; i < args.Length; ++i) {
-						if (args[i] == "INVedit.exe") finish = true;
-						else {
-							if (File.Exists(args[i])) File.Delete(args[i]);
-							File.Move("_"+args[i], args[i]);
-						}
-					}
-					if (finish) {
-						File.Delete("INVedit.exe");
-						File.Copy("_INVedit.exe", "INVedit.exe");
-						Process.Start("INVedit.exe", "-finish");
-						return;
-					}
-					args = new string[0];
-				} else if (args[0] == "-finish") {
-					Thread.Sleep(100);
-					File.Delete("_INVedit.exe");
-					args = new string[0];
-				}
+			Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+			
+			if (args.Length > 0) switch (args[0]) {
+				case "-update":
+					while (true) {
+						try { File.Delete("INVedit.exe"); break; } catch {  }
+						Thread.Sleep(0);
+					} File.Copy("_INVedit.exe", "INVedit.exe");
+					Process.Start("INVedit.exe", "-finish");
+					return;
+				case "-finish":
+					while (true) {
+						try { File.Delete("_INVedit.exe"); break; } catch {  }
+						Thread.Sleep(0);
+					} break;
 			}
 			
 			Application.EnableVisualStyles();

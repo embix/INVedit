@@ -21,9 +21,8 @@ namespace INVedit
 		public bool world = false;
 		public Dictionary<byte, ItemSlot> slots = new Dictionary<byte, ItemSlot>();
 		
-		public Page(string text)
+		public Page()
 		{
-			Text = text;
 			UseVisualStyleBackColor = true;
 			
 			if (resources == null) {
@@ -66,11 +65,18 @@ namespace INVedit
 			for (int i = 0; i < 9; ++i) CreateSlot((byte)(27+i), 7 + i*50, 175);
 			for (int i = 0; i < 9; ++i) CreateSlot((byte)i, 7 + i*50, 231);
 			
-			ItemSlot panel = new DeleteItemSlot(
+			DeleteItemSlot delete = new DeleteItemSlot(
 				(Image)resources.GetObject("delete1"),
 				(Image)resources.GetObject("delete2")
 			){ Location = new Point(407, 19), UseVisualStyleBackColor = true };
-			boxInventory.Controls.Add(panel);
+			boxInventory.Controls.Add(delete);
+			delete.DeleteDone += delegate {
+				boxDamage.Enabled = false;
+				boxCount.Enabled = false;
+				boxDamage.Value = 0;
+				boxCount.Minimum = 0;
+				boxCount.Value = 0;
+			};
 			
 			boxDamage.LostFocus += BoxLostFocus;
 			boxCount.LostFocus += BoxLostFocus;
@@ -127,9 +133,9 @@ namespace INVedit
 			bool enabled = (selected.Item != null);
 			boxDamage.Enabled = enabled;
 			boxCount.Enabled = enabled;
-			boxDamage.Value = enabled ? selected.Item.Damage : 0;
+			boxDamage.Value = enabled ? (int)selected.Item.Damage : 0;
 			boxCount.Minimum = enabled ? 1 : 0;
-			boxCount.Value = enabled ? selected.Item.Count : 0;
+			boxCount.Value = enabled ? (int)selected.Item.Count : 0;
 			
 			boxDamage.ValueChanged += ValueChanged;
 			boxCount.ValueChanged += ValueChanged;

@@ -7,10 +7,6 @@ namespace INVedit
 {
 	public static class Inventory
 	{
-		public static void Load(string filename, Dictionary<byte, ItemSlot> slots)
-		{
-			Load(Tag.Load(filename)["Data"]["Player"]["Inventory"], slots);
-		}
 		public static void Load(Tag inventory, Dictionary<byte, ItemSlot> slots)
 		{
 			try {
@@ -31,12 +27,6 @@ namespace INVedit
 			} finally { foreach (ItemSlot slot in slots.Values) slot.Refresh(); }
 		}
 		
-		public static void Save(string filename, Dictionary<byte, ItemSlot> slots)
-		{
-			Tag tag = Tag.Load(filename);
-			Save(tag["Data"]["Player"], slots);
-			tag.Save(filename);
-		}
 		public static void Save(Tag parent, Dictionary<byte, ItemSlot> slots)
 		{
 			if (parent.Contains("Inventory")) parent["Inventory"].Remove();

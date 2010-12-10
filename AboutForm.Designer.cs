@@ -46,7 +46,6 @@ namespace INVedit
 			this.linkLabel3 = new System.Windows.Forms.LinkLabel();
 			this.linkLabel2 = new System.Windows.Forms.LinkLabel();
 			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
 			this.label8 = new System.Windows.Forms.Label();
@@ -58,7 +57,7 @@ namespace INVedit
 			this.pictureBox1.ErrorImage = null;
 			this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
 			this.pictureBox1.InitialImage = null;
-			this.pictureBox1.Location = new System.Drawing.Point(9, 11);
+			this.pictureBox1.Location = new System.Drawing.Point(8, 9);
 			this.pictureBox1.Name = "pictureBox1";
 			this.pictureBox1.Size = new System.Drawing.Size(32, 32);
 			this.pictureBox1.TabIndex = 18;
@@ -66,7 +65,7 @@ namespace INVedit
 			// 
 			// label6
 			// 
-			this.label6.Location = new System.Drawing.Point(11, 120);
+			this.label6.Location = new System.Drawing.Point(11, 114);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(202, 13);
 			this.label6.TabIndex = 17;
@@ -75,7 +74,7 @@ namespace INVedit
 			// 
 			// label7
 			// 
-			this.label7.Location = new System.Drawing.Point(12, 86);
+			this.label7.Location = new System.Drawing.Point(12, 81);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(94, 13);
 			this.label7.TabIndex = 15;
@@ -84,7 +83,7 @@ namespace INVedit
 			// 
 			// label5
 			// 
-			this.label5.Location = new System.Drawing.Point(12, 52);
+			this.label5.Location = new System.Drawing.Point(12, 48);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(94, 13);
 			this.label5.TabIndex = 16;
@@ -93,7 +92,7 @@ namespace INVedit
 			// 
 			// label4
 			// 
-			this.label4.Location = new System.Drawing.Point(76, 106);
+			this.label4.Location = new System.Drawing.Point(76, 100);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(112, 13);
 			this.label4.TabIndex = 14;
@@ -101,7 +100,7 @@ namespace INVedit
 			// 
 			// label3
 			// 
-			this.label3.Location = new System.Drawing.Point(36, 106);
+			this.label3.Location = new System.Drawing.Point(36, 100);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(42, 13);
 			this.label3.TabIndex = 13;
@@ -109,7 +108,7 @@ namespace INVedit
 			// 
 			// linkLabel3
 			// 
-			this.linkLabel3.Location = new System.Drawing.Point(109, 86);
+			this.linkLabel3.Location = new System.Drawing.Point(109, 81);
 			this.linkLabel3.Name = "linkLabel3";
 			this.linkLabel3.Size = new System.Drawing.Size(101, 13);
 			this.linkLabel3.TabIndex = 11;
@@ -119,7 +118,7 @@ namespace INVedit
 			// 
 			// linkLabel2
 			// 
-			this.linkLabel2.Location = new System.Drawing.Point(109, 52);
+			this.linkLabel2.Location = new System.Drawing.Point(109, 48);
 			this.linkLabel2.Name = "linkLabel2";
 			this.linkLabel2.Size = new System.Drawing.Size(101, 13);
 			this.linkLabel2.TabIndex = 12;
@@ -129,7 +128,7 @@ namespace INVedit
 			// 
 			// linkLabel1
 			// 
-			this.linkLabel1.Location = new System.Drawing.Point(100, 34);
+			this.linkLabel1.Location = new System.Drawing.Point(136, 25);
 			this.linkLabel1.Name = "linkLabel1";
 			this.linkLabel1.Size = new System.Drawing.Size(79, 13);
 			this.linkLabel1.TabIndex = 10;
@@ -137,28 +136,20 @@ namespace INVedit
 			this.linkLabel1.Text = "SharpDevelop";
 			this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel1LinkClicked);
 			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(45, 34);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(58, 13);
-			this.label2.TabIndex = 9;
-			this.label2.Text = "Made with";
-			// 
 			// label1
 			// 
 			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 									| System.Windows.Forms.AnchorStyles.Right)));
-			this.label1.Location = new System.Drawing.Point(43, 7);
+			this.label1.Location = new System.Drawing.Point(48, 12);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(166, 27);
+			this.label1.Size = new System.Drawing.Size(167, 27);
 			this.label1.TabIndex = 8;
-			this.label1.Text = "INVedit ({version}) - by copyboy\r\nC# .NET ({net-version})";
-			this.label1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+			this.label1.Text = "INVedit ({version}) - by copyboy\r\nWritten in C# with";
+			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// label9
 			// 
-			this.label9.Location = new System.Drawing.Point(108, 71);
+			this.label9.Location = new System.Drawing.Point(108, 66);
 			this.label9.Name = "label9";
 			this.label9.Size = new System.Drawing.Size(102, 13);
 			this.label9.TabIndex = 20;
@@ -166,7 +157,7 @@ namespace INVedit
 			// 
 			// label8
 			// 
-			this.label8.Location = new System.Drawing.Point(12, 71);
+			this.label8.Location = new System.Drawing.Point(12, 66);
 			this.label8.Name = "label8";
 			this.label8.Size = new System.Drawing.Size(94, 13);
 			this.label8.TabIndex = 19;
@@ -177,7 +168,7 @@ namespace INVedit
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(222, 140);
+			this.ClientSize = new System.Drawing.Size(222, 136);
 			this.Controls.Add(this.label9);
 			this.Controls.Add(this.label8);
 			this.Controls.Add(this.pictureBox1);
@@ -189,7 +180,6 @@ namespace INVedit
 			this.Controls.Add(this.linkLabel3);
 			this.Controls.Add(this.linkLabel2);
 			this.Controls.Add(this.linkLabel1);
-			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
 			this.Name = "AboutForm";
@@ -209,7 +199,6 @@ namespace INVedit
 		private System.Windows.Forms.Label label7;
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.PictureBox pictureBox1;
-		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.LinkLabel linkLabel1;
 		private System.Windows.Forms.Label label1;
 	}

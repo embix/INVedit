@@ -12,7 +12,6 @@ namespace INVedit
 		{
 			InitializeComponent();
 			label1.Text = label1.Text.Replace("{version}", Assembly.GetExecutingAssembly().GetName().Version.ToString(3));
-			label1.Text = label1.Text.Replace("{net-version}", Environment.Version.ToString());
 		}
 		
 		void LinkLabel1LinkClicked(object sender,LinkLabelLinkClickedEventArgs e)

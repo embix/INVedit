@@ -9,6 +9,8 @@ namespace INVedit
 		Image enabled;
 		Image disabled;
 		
+		public event Action<ItemSlot> DeleteDone = delegate {  };
+		
 		public DeleteItemSlot(Image enabled, Image disabled) : base(0xFF)
 		{
 			this.enabled = enabled;
@@ -35,6 +37,7 @@ namespace INVedit
 		protected override void OnDragDrop(DragEventArgs e)
 		{
 			other = null;
+			DeleteDone(this);
 		}
 	}
 }

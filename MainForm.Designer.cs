@@ -39,26 +39,14 @@ namespace INVedit
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.toolStrip = new System.Windows.Forms.ToolStrip();
 			this.btnNew = new System.Windows.Forms.ToolStripButton();
-			this.btnOpen = new System.Windows.Forms.ToolStripButton();
-			this.btnSave = new System.Windows.Forms.ToolStripButton();
-			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-			this.btnOpenGame = new System.Windows.Forms.ToolStripSplitButton();
-			this.btnOpenWorld1 = new System.Windows.Forms.ToolStripMenuItem();
-			this.btnOpenWorld2 = new System.Windows.Forms.ToolStripMenuItem();
-			this.btnOpenWorld3 = new System.Windows.Forms.ToolStripMenuItem();
-			this.btnOpenWorld4 = new System.Windows.Forms.ToolStripMenuItem();
-			this.btnOpenWorld5 = new System.Windows.Forms.ToolStripMenuItem();
-			this.btnSaveGame = new System.Windows.Forms.ToolStripSplitButton();
-			this.btnSaveWorld1 = new System.Windows.Forms.ToolStripMenuItem();
-			this.btnSaveWorld2 = new System.Windows.Forms.ToolStripMenuItem();
-			this.btnSaveWorld3 = new System.Windows.Forms.ToolStripMenuItem();
-			this.btnSaveWorld4 = new System.Windows.Forms.ToolStripMenuItem();
-			this.btnSaveWorld5 = new System.Windows.Forms.ToolStripMenuItem();
+			this.btnOpen = new System.Windows.Forms.ToolStripSplitButton();
+			this.btnSave = new System.Windows.Forms.ToolStripSplitButton();
 			this.btnAbout = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.btnReload = new System.Windows.Forms.ToolStripButton();
 			this.btnCloseTab = new System.Windows.Forms.ToolStripButton();
 			this.btnUpdate = new System.Windows.Forms.ToolStripButton();
+			this.barUpdate = new System.Windows.Forms.ToolStripProgressBar();
 			this.tabControl = new System.Windows.Forms.TabControl();
 			this.boxItems = new System.Windows.Forms.ListView();
 			this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
@@ -72,14 +60,12 @@ namespace INVedit
 									this.btnNew,
 									this.btnOpen,
 									this.btnSave,
-									this.toolStripSeparator1,
-									this.btnOpenGame,
-									this.btnSaveGame,
 									this.btnAbout,
 									this.toolStripSeparator2,
 									this.btnReload,
 									this.btnCloseTab,
-									this.btnUpdate});
+									this.btnUpdate,
+									this.barUpdate});
 			this.toolStrip.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip.Name = "toolStrip";
 			this.toolStrip.Size = new System.Drawing.Size(672, 25);
@@ -101,9 +87,11 @@ namespace INVedit
 			this.btnOpen.Image = ((System.Drawing.Image)(resources.GetObject("btnOpen.Image")));
 			this.btnOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnOpen.Name = "btnOpen";
-			this.btnOpen.Size = new System.Drawing.Size(23, 22);
+			this.btnOpen.Size = new System.Drawing.Size(32, 22);
 			this.btnOpen.Text = "Open";
-			this.btnOpen.Click += new System.EventHandler(this.BtnOpenClick);
+			this.btnOpen.ButtonClick += new System.EventHandler(this.BtnOpenClick);
+			this.btnOpen.DropDownOpening += new System.EventHandler(this.BtnOpenDropDownOpening);
+			this.btnOpen.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.BtnOpenDropDownItemClicked);
 			// 
 			// btnSave
 			// 
@@ -112,129 +100,11 @@ namespace INVedit
 			this.btnSave.Image = ((System.Drawing.Image)(resources.GetObject("btnSave.Image")));
 			this.btnSave.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnSave.Name = "btnSave";
-			this.btnSave.Size = new System.Drawing.Size(23, 22);
+			this.btnSave.Size = new System.Drawing.Size(32, 22);
 			this.btnSave.Text = "Save";
-			this.btnSave.Click += new System.EventHandler(this.BtnSaveClick);
-			// 
-			// toolStripSeparator1
-			// 
-			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-			// 
-			// btnOpenGame
-			// 
-			this.btnOpenGame.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.btnOpenGame.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-									this.btnOpenWorld1,
-									this.btnOpenWorld2,
-									this.btnOpenWorld3,
-									this.btnOpenWorld4,
-									this.btnOpenWorld5});
-			this.btnOpenGame.Image = ((System.Drawing.Image)(resources.GetObject("btnOpenGame.Image")));
-			this.btnOpenGame.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.btnOpenGame.Name = "btnOpenGame";
-			this.btnOpenGame.Size = new System.Drawing.Size(32, 22);
-			this.btnOpenGame.Text = "Open from game";
-			this.btnOpenGame.ButtonClick += new System.EventHandler(this.BtnOpenGameClick);
-			this.btnOpenGame.DropDownOpening += new System.EventHandler(this.BtnOpenGameDropDownOpening);
-			// 
-			// btnOpenWorld1
-			// 
-			this.btnOpenWorld1.Image = ((System.Drawing.Image)(resources.GetObject("btnOpenWorld1.Image")));
-			this.btnOpenWorld1.Name = "btnOpenWorld1";
-			this.btnOpenWorld1.Size = new System.Drawing.Size(174, 22);
-			this.btnOpenWorld1.Text = "Open from world 1";
-			this.btnOpenWorld1.Click += new System.EventHandler(this.BtnOpenWorldClick);
-			// 
-			// btnOpenWorld2
-			// 
-			this.btnOpenWorld2.Image = ((System.Drawing.Image)(resources.GetObject("btnOpenWorld2.Image")));
-			this.btnOpenWorld2.Name = "btnOpenWorld2";
-			this.btnOpenWorld2.Size = new System.Drawing.Size(174, 22);
-			this.btnOpenWorld2.Text = "Open from world 2";
-			this.btnOpenWorld2.Click += new System.EventHandler(this.BtnOpenWorldClick);
-			// 
-			// btnOpenWorld3
-			// 
-			this.btnOpenWorld3.Image = ((System.Drawing.Image)(resources.GetObject("btnOpenWorld3.Image")));
-			this.btnOpenWorld3.Name = "btnOpenWorld3";
-			this.btnOpenWorld3.Size = new System.Drawing.Size(174, 22);
-			this.btnOpenWorld3.Text = "Open from world 3";
-			this.btnOpenWorld3.Click += new System.EventHandler(this.BtnOpenWorldClick);
-			// 
-			// btnOpenWorld4
-			// 
-			this.btnOpenWorld4.Image = ((System.Drawing.Image)(resources.GetObject("btnOpenWorld4.Image")));
-			this.btnOpenWorld4.Name = "btnOpenWorld4";
-			this.btnOpenWorld4.Size = new System.Drawing.Size(174, 22);
-			this.btnOpenWorld4.Text = "Open from world 4";
-			this.btnOpenWorld4.Click += new System.EventHandler(this.BtnOpenWorldClick);
-			// 
-			// btnOpenWorld5
-			// 
-			this.btnOpenWorld5.Image = ((System.Drawing.Image)(resources.GetObject("btnOpenWorld5.Image")));
-			this.btnOpenWorld5.Name = "btnOpenWorld5";
-			this.btnOpenWorld5.Size = new System.Drawing.Size(174, 22);
-			this.btnOpenWorld5.Text = "Open from world 5";
-			this.btnOpenWorld5.Click += new System.EventHandler(this.BtnOpenWorldClick);
-			// 
-			// btnSaveGame
-			// 
-			this.btnSaveGame.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.btnSaveGame.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-									this.btnSaveWorld1,
-									this.btnSaveWorld2,
-									this.btnSaveWorld3,
-									this.btnSaveWorld4,
-									this.btnSaveWorld5});
-			this.btnSaveGame.Enabled = false;
-			this.btnSaveGame.Image = ((System.Drawing.Image)(resources.GetObject("btnSaveGame.Image")));
-			this.btnSaveGame.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.btnSaveGame.Name = "btnSaveGame";
-			this.btnSaveGame.Size = new System.Drawing.Size(32, 22);
-			this.btnSaveGame.Text = "Save to game";
-			this.btnSaveGame.ButtonClick += new System.EventHandler(this.BtnSaveGameClick);
-			this.btnSaveGame.DropDownOpening += new System.EventHandler(this.BtnSaveGameDropDownOpening);
-			// 
-			// btnSaveWorld1
-			// 
-			this.btnSaveWorld1.Image = ((System.Drawing.Image)(resources.GetObject("btnSaveWorld1.Image")));
-			this.btnSaveWorld1.Name = "btnSaveWorld1";
-			this.btnSaveWorld1.Size = new System.Drawing.Size(160, 22);
-			this.btnSaveWorld1.Text = "Save to world 1";
-			this.btnSaveWorld1.Click += new System.EventHandler(this.BtnSaveWorldClick);
-			// 
-			// btnSaveWorld2
-			// 
-			this.btnSaveWorld2.Image = ((System.Drawing.Image)(resources.GetObject("btnSaveWorld2.Image")));
-			this.btnSaveWorld2.Name = "btnSaveWorld2";
-			this.btnSaveWorld2.Size = new System.Drawing.Size(160, 22);
-			this.btnSaveWorld2.Text = "Save to world 2";
-			this.btnSaveWorld2.Click += new System.EventHandler(this.BtnSaveWorldClick);
-			// 
-			// btnSaveWorld3
-			// 
-			this.btnSaveWorld3.Image = ((System.Drawing.Image)(resources.GetObject("btnSaveWorld3.Image")));
-			this.btnSaveWorld3.Name = "btnSaveWorld3";
-			this.btnSaveWorld3.Size = new System.Drawing.Size(160, 22);
-			this.btnSaveWorld3.Text = "Save to world 3";
-			this.btnSaveWorld3.Click += new System.EventHandler(this.BtnSaveWorldClick);
-			// 
-			// btnSaveWorld4
-			// 
-			this.btnSaveWorld4.Image = ((System.Drawing.Image)(resources.GetObject("btnSaveWorld4.Image")));
-			this.btnSaveWorld4.Name = "btnSaveWorld4";
-			this.btnSaveWorld4.Size = new System.Drawing.Size(160, 22);
-			this.btnSaveWorld4.Text = "Save to world 4";
-			this.btnSaveWorld4.Click += new System.EventHandler(this.BtnSaveWorldClick);
-			// 
-			// btnSaveWorld5
-			// 
-			this.btnSaveWorld5.Image = ((System.Drawing.Image)(resources.GetObject("btnSaveWorld5.Image")));
-			this.btnSaveWorld5.Name = "btnSaveWorld5";
-			this.btnSaveWorld5.Size = new System.Drawing.Size(160, 22);
-			this.btnSaveWorld5.Text = "Save to world 5";
-			this.btnSaveWorld5.Click += new System.EventHandler(this.BtnSaveWorldClick);
+			this.btnSave.ButtonClick += new System.EventHandler(this.BtnSaveClick);
+			this.btnSave.DropDownOpening += new System.EventHandler(this.BtnSaveDropDownOpening);
+			this.btnSave.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.BtnSaveDropDownItemClicked);
 			// 
 			// btnAbout
 			// 
@@ -277,18 +147,26 @@ namespace INVedit
 			// btnUpdate
 			// 
 			this.btnUpdate.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.btnUpdate.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.btnUpdate.Enabled = false;
 			this.btnUpdate.Image = ((System.Drawing.Image)(resources.GetObject("btnUpdate.Image")));
 			this.btnUpdate.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnUpdate.Name = "btnUpdate";
-			this.btnUpdate.Size = new System.Drawing.Size(23, 22);
-			this.btnUpdate.Text = "Update";
+			this.btnUpdate.Size = new System.Drawing.Size(115, 22);
+			this.btnUpdate.Text = "Check for updates";
 			this.btnUpdate.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
 			this.btnUpdate.Click += new System.EventHandler(this.BtnUpdateClick);
 			// 
+			// barUpdate
+			// 
+			this.barUpdate.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.barUpdate.AutoSize = false;
+			this.barUpdate.Margin = new System.Windows.Forms.Padding(1, 2, 4, 1);
+			this.barUpdate.Name = "barUpdate";
+			this.barUpdate.Size = new System.Drawing.Size(100, 21);
+			this.barUpdate.Visible = false;
+			// 
 			// tabControl
 			// 
+			this.tabControl.AllowDrop = true;
 			this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
 									| System.Windows.Forms.AnchorStyles.Left) 
 									| System.Windows.Forms.AnchorStyles.Right)));
@@ -309,15 +187,28 @@ namespace INVedit
 			this.boxItems.Name = "boxItems";
 			this.boxItems.Size = new System.Drawing.Size(150, 322);
 			this.boxItems.TabIndex = 5;
-			this.boxItems.TileSize = new System.Drawing.Size(124, 19);
+			this.boxItems.TileSize = new System.Drawing.Size(120, 19);
 			this.boxItems.UseCompatibleStateImageBehavior = false;
 			this.boxItems.View = System.Windows.Forms.View.Tile;
+			// 
+			// saveFileDialog
+			// 
+			this.saveFileDialog.DefaultExt = "inv";
+			this.saveFileDialog.Filter = "All supported files|*.dat;*.inv|Minecraft files (*.dat)|*.dat|Inventory files (*." +
+			"inv)|*.inv|All files (*.*)|*.*";
+			this.saveFileDialog.Title = "Save inventory";
+			// 
+			// openFileDialog
+			// 
+			this.openFileDialog.DefaultExt = "inv";
+			this.openFileDialog.Filter = "All supported files|*.dat;*.inv|Minecraft files (*.dat)|*.dat|Inventory files (*." +
+			"inv)|*.inv|All files (*.*)|*.*";
+			this.openFileDialog.Title = "Open inventory";
 			// 
 			// MainForm
 			// 
 			this.AllowDrop = true;
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(672, 356);
 			this.Controls.Add(this.toolStrip);
 			this.Controls.Add(this.tabControl);
@@ -325,8 +216,6 @@ namespace INVedit
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
-			this.MaximumSize = new System.Drawing.Size(678, 32656);
-			this.MinimumSize = new System.Drawing.Size(678, 388);
 			this.Name = "MainForm";
 			this.Text = "INVedit - Minecraft Inventory Editor";
 			this.toolStrip.ResumeLayout(false);
@@ -334,31 +223,19 @@ namespace INVedit
 			this.ResumeLayout(false);
 			this.PerformLayout();
 		}
+		private System.Windows.Forms.ToolStripProgressBar barUpdate;
 		private System.Windows.Forms.ToolStripButton btnUpdate;
 		private System.Windows.Forms.ToolStripButton btnReload;
-		private System.Windows.Forms.ToolStripSplitButton btnSaveGame;
-		private System.Windows.Forms.ToolStripMenuItem btnSaveWorld5;
-		private System.Windows.Forms.ToolStripMenuItem btnSaveWorld4;
-		private System.Windows.Forms.ToolStripMenuItem btnSaveWorld3;
-		private System.Windows.Forms.ToolStripMenuItem btnSaveWorld2;
-		private System.Windows.Forms.ToolStripMenuItem btnSaveWorld1;
-		private System.Windows.Forms.ToolStripMenuItem btnOpenWorld5;
-		private System.Windows.Forms.ToolStripMenuItem btnOpenWorld4;
-		private System.Windows.Forms.ToolStripMenuItem btnOpenWorld3;
-		private System.Windows.Forms.ToolStripMenuItem btnOpenWorld2;
-		private System.Windows.Forms.ToolStripMenuItem btnOpenWorld1;
 		private System.Windows.Forms.ToolStripButton btnCloseTab;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
 		private System.Windows.Forms.OpenFileDialog openFileDialog;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog;
 		private System.Windows.Forms.TabControl tabControl;
 		private System.Windows.Forms.ToolStripButton btnAbout;
-		private System.Windows.Forms.ToolStripSplitButton btnOpenGame;
 		private System.Windows.Forms.ListView boxItems;
-		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-		private System.Windows.Forms.ToolStripButton btnSave;
+		private System.Windows.Forms.ToolStripSplitButton btnSave;
 		private System.Windows.Forms.ToolStrip toolStrip;
-		private System.Windows.Forms.ToolStripButton btnOpen;
+		private System.Windows.Forms.ToolStripSplitButton btnOpen;
 		private System.Windows.Forms.ToolStripButton btnNew;
 	}
 }
