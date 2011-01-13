@@ -10,7 +10,7 @@ namespace INVedit
 		public static void Load(Tag inventory, Dictionary<byte, ItemSlot> slots)
 		{
 			try {
-				foreach (ItemSlot slot in slots.Values) slot.Clear();
+				foreach (ItemSlot slot in slots.Values) slot.Item = null;
 				foreach (Tag tag in inventory) {
 					short id = (short)tag["id"];
 					byte slot = (byte)tag["Slot"];

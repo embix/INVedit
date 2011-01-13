@@ -93,6 +93,9 @@ namespace INVedit
 			ItemSlot itemSlot = new ItemSlot(slot){ Location = new Point(x, y), Default = def, UseVisualStyleBackColor = true };
 			itemSlot.GotFocus += SelectionChanged;
 			itemSlot.DragDone += ItemDragDrop;
+			itemSlot.Changed += delegate(ItemSlot s) {
+				SelectionChanged(s, new EventArgs());
+			};
 			boxInventory.Controls.Add(itemSlot);
 			slots.Add(slot, itemSlot);
 		}

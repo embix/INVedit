@@ -16,16 +16,14 @@ namespace INVedit
 	{
 		static string appdata;
 		static MainForm() {
-			if (Platform.Current == Platform.Windows) {
+			if (Platform.Current == Platform.Windows)
 				appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)+"/.minecraft";
-			} else if (Platform.Current == Platform.Mac) {
-				appdata = Environment.ExpandEnvironmentVariables("HOME")+"/Library/Application Support/minecraft";
-			} else {
-				appdata = Environment.ExpandEnvironmentVariables("HOME")+"/.minecraft";
-			}
+			else if (Platform.Current == Platform.Mac)
+				appdata = Environment.GetEnvironmentVariable("HOME")+"/Library/Application Support/minecraft";
+			else
+				appdata = Environment.GetEnvironmentVariable("HOME")+"/.minecraft";
 		}
 		
-		bool update = true;
 		List<CheckBox> groups = new List<CheckBox>();
 		
 		string url = "http://copy.mcft.net/mc/INVedit";
@@ -50,14 +48,13 @@ namespace INVedit
 			foreach (Data.Group group in Data.groups.Values) {
 				CheckBox box = new CheckBox();
 				box.Size = new Size(26, 26);
-				box.Location = new Point(Width-189, 30 + groups.Count*27);
+				box.Location = new Point(Width-189, 29 + groups.Count*27);
 				box.ImageList = Data.list;
 				box.ImageIndex = group.imageIndex;
 				box.Appearance = Appearance.Button;
 				box.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 				box.Checked = true;
 				box.Tag = group;
-				box.CheckedChanged += ItemChecked;
 				box.MouseDown += ItemMouseDown;
 				Controls.Add(box);
 				groups.Add(box);
@@ -148,38 +145,76 @@ namespace INVedit
 		{
 			boxItems.BeginUpdate();
 			boxItems.Clear();
-			foreach (CheckBox box in groups) if (box.Checked)
-				foreach (Data.Item i in ((Data.Group)box.Tag).items)
-					boxItems.Items.Add(new ListViewItem(i.name, i.imageIndex){ Tag = i });
+			if (boxSearch.Text == "" || boxSearch.Font.Italic) {
+				foreach (CheckBox box in groups) if (box.Checked)
+					foreach (Data.Item item in ((Data.Group)box.Tag).items)
+						boxItems.Items.Add(new ListViewItem(item.name, item.imageIndex){ Tag = new Item(item.id, 0, 0, item.damage) });
+			} else {
+				short id;
+				if (short.TryParse(boxSearch.Text, out id)) {
+					if (Data.items.ContainsKey(id))
+						foreach (Data.Item item in Data.items[id].Values)
+							boxItems.Items.Add(new ListViewItem(item.name, item.imageIndex){ Tag = new Item(item.id, 0, 0, item.damage) });
+					else boxItems.Items.Add(new ListViewItem("Unknown item "+id, 0){ Tag = new Item(id) });
+				} else foreach (CheckBox box in groups) if (box.Checked)
+					foreach (Data.Item item in ((Data.Group)box.Tag).items)
+						if (item.name.IndexOf(boxSearch.Text, StringComparison.InvariantCultureIgnoreCase) >= 0)
+							boxItems.Items.Add(new ListViewItem(item.name, item.imageIndex){ Tag = new Item(item.id, 0, 0, item.damage) });
+			}
 			boxItems.EndUpdate();
-		}
-		
-		void ItemChecked(object sender, EventArgs e)
-		{
-			if (update) UpdateItems();
 		}
 		
 		void ItemMouseDown(object sender, MouseEventArgs e)
 		{
-			if (e.Button != MouseButtons.Right) return;
-			update = false;
-			bool changed = false;
 			CheckBox self = (CheckBox)sender;
-			foreach (CheckBox box in groups) if (box.Checked == (self!=box)) {
+			bool changed = false;
+			if (e.Button == MouseButtons.Left) {
+				bool other = true;
+				foreach (CheckBox box in groups)
+					if (box.Checked == (self!=box))
+						other = false;
+				foreach (CheckBox box in groups)
+					if (box.Checked == (self!=box) || other) {
+					changed = true;
+					box.Checked = (self==box) || other;
+				}
+			} else if (e.Button == MouseButtons.Right) {
+				self.Checked = !self.Checked;
 				changed = true;
-				box.Checked = (self==box);
-			}
+			} else return;
 			self.Select();
-			update = true;
 			if (changed) UpdateItems();
+			if (e.Button == MouseButtons.Left)
+				self.Checked = !self.Checked;
+		}
+		
+		void BoxSearchEnter(object sender, EventArgs e)
+		{
+			if (!boxSearch.Font.Italic) return;
+			boxSearch.Font = new Font(boxSearch.Font, FontStyle.Regular);
+			boxSearch.ForeColor = SystemColors.ControlText;
+			boxSearch.Text = "";
+		}
+		
+		void BoxSearchLeave(object sender, EventArgs e)
+		{
+			if (boxSearch.Text != "") return;
+			boxSearch.Font = new Font(boxSearch.Font, FontStyle.Italic);
+			boxSearch.ForeColor = Color.Gray;
+			boxSearch.Text = "Search...";
+		}
+		
+		void BoxSearchTextChanged(object sender, EventArgs e)
+		{
+			UpdateItems();
 		}
 		
 		void ItemDrag(object sender, ItemDragEventArgs e)
 		{
 			if (e.Button != MouseButtons.Left) return;
-			ListViewItem item = (ListViewItem)e.Item;
-			Item i = new Item(((Data.Item)item.Tag).id);
-			DoDragDrop(i, DragDropEffects.Copy | DragDropEffects.Move);
+			Item item = (Item)((ListViewItem)e.Item).Tag;
+			item = new Item(item.ID, 1, 0, item.Damage);
+			DoDragDrop(item, DragDropEffects.Copy | DragDropEffects.Move);
 		}
 		
 		void BtnNewClick(object sender, EventArgs e)
@@ -268,7 +303,8 @@ namespace INVedit
 				item.Enabled = File.Exists(file);
 				item.Tag = file;
 			} Image world = (Image)resources.GetObject("world");
-			foreach (DirectoryInfo dir in new DirectoryInfo(appdata+"/saves").GetDirectories()) {
+			DirectoryInfo dirs = new DirectoryInfo(appdata+"/saves");
+			if (dirs.Exists) foreach (DirectoryInfo dir in dirs.GetDirectories()) {
 				if (dir.GetFiles("level.dat").Length > 0 && dir.Name != "World1" && dir.Name != "World2" &&
 				    dir.Name != "World3" && dir.Name != "World4" && dir.Name != "World5") {
 					ToolStripItem item = btnOpen.DropDownItems.Add("Open "+dir.Name, world);
@@ -343,9 +379,8 @@ namespace INVedit
 		void VersionCompleted(object sender, DownloadStringCompletedEventArgs e)
 		{
 			if (e.Error!=null) {
-				btnUpdate.Text = "Check for updates";
-				btnUpdate.Enabled = true;
-				throw e.Error;
+				btnUpdate.Text = "Error while checking for updates";
+				return;
 			} int version = 1;
 			string[] lines = e.Result.Split(new string[]{ "\r\n" }, StringSplitOptions.None);
 			download = new List<string>();

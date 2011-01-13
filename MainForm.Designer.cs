@@ -51,6 +51,7 @@ namespace INVedit
 			this.boxItems = new System.Windows.Forms.ListView();
 			this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
 			this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+			this.boxSearch = new System.Windows.Forms.TextBox();
 			this.toolStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -69,7 +70,7 @@ namespace INVedit
 			this.toolStrip.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip.Name = "toolStrip";
 			this.toolStrip.Size = new System.Drawing.Size(672, 25);
-			this.toolStrip.TabIndex = 4;
+			this.toolStrip.TabIndex = 0;
 			// 
 			// btnNew
 			// 
@@ -174,7 +175,7 @@ namespace INVedit
 			this.tabControl.Name = "tabControl";
 			this.tabControl.SelectedIndex = 0;
 			this.tabControl.Size = new System.Drawing.Size(481, 323);
-			this.tabControl.TabIndex = 6;
+			this.tabControl.TabIndex = 1;
 			this.tabControl.Selected += new System.Windows.Forms.TabControlEventHandler(this.TabControlSelected);
 			this.tabControl.DragOver += new System.Windows.Forms.DragEventHandler(this.TabControlDragOver);
 			// 
@@ -182,12 +183,12 @@ namespace INVedit
 			// 
 			this.boxItems.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
 									| System.Windows.Forms.AnchorStyles.Right)));
-			this.boxItems.Location = new System.Drawing.Point(518, 29);
+			this.boxItems.Location = new System.Drawing.Point(518, 51);
 			this.boxItems.MultiSelect = false;
 			this.boxItems.Name = "boxItems";
-			this.boxItems.Size = new System.Drawing.Size(150, 322);
-			this.boxItems.TabIndex = 5;
-			this.boxItems.TileSize = new System.Drawing.Size(120, 19);
+			this.boxItems.Size = new System.Drawing.Size(150, 301);
+			this.boxItems.TabIndex = 3;
+			this.boxItems.TileSize = new System.Drawing.Size(128, 19);
 			this.boxItems.UseCompatibleStateImageBehavior = false;
 			this.boxItems.View = System.Windows.Forms.View.Tile;
 			// 
@@ -205,11 +206,25 @@ namespace INVedit
 			"inv)|*.inv|All files (*.*)|*.*";
 			this.openFileDialog.Title = "Open inventory";
 			// 
+			// boxSearch
+			// 
+			this.boxSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.boxSearch.ForeColor = System.Drawing.Color.Gray;
+			this.boxSearch.Location = new System.Drawing.Point(518, 29);
+			this.boxSearch.Name = "boxSearch";
+			this.boxSearch.Size = new System.Drawing.Size(150, 20);
+			this.boxSearch.TabIndex = 2;
+			this.boxSearch.Text = "Search...";
+			this.boxSearch.TextChanged += new System.EventHandler(this.BoxSearchTextChanged);
+			this.boxSearch.Leave += new System.EventHandler(this.BoxSearchLeave);
+			this.boxSearch.Enter += new System.EventHandler(this.BoxSearchEnter);
+			// 
 			// MainForm
 			// 
 			this.AllowDrop = true;
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.ClientSize = new System.Drawing.Size(672, 356);
+			this.Controls.Add(this.boxSearch);
 			this.Controls.Add(this.toolStrip);
 			this.Controls.Add(this.tabControl);
 			this.Controls.Add(this.boxItems);
@@ -223,6 +238,7 @@ namespace INVedit
 			this.ResumeLayout(false);
 			this.PerformLayout();
 		}
+		private System.Windows.Forms.TextBox boxSearch;
 		private System.Windows.Forms.ToolStripProgressBar barUpdate;
 		private System.Windows.Forms.ToolStripButton btnUpdate;
 		private System.Windows.Forms.ToolStripButton btnReload;

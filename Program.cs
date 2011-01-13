@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Threading;
 using System.Diagnostics;
+using System.Reflection;
 
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -16,6 +17,9 @@ namespace INVedit
 		static void Main(string[] args)
 		{
 			Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+			
+			try { Assembly.Load("NBT"); }
+			catch { MessageBox.Show("Error", "Couldn't load NBT.dll."); return; }
 			
 			if (args.Length > 0) switch (args[0]) {
 				case "-update":

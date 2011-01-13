@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace INVedit
 {
@@ -11,7 +12,6 @@ namespace INVedit
 		static Font font1 = new Font(FontFamily.GenericMonospace, 8, FontStyle.Bold);
 		static Font font2 = new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold);
 		protected static Item other = null;
-		ToolTip toolTip = new ToolTip(){ AutomaticDelay = 300 };
 		
 		protected static event Action<ItemSlot> DragBegin = delegate {  };
 		protected static event Action<ItemSlot> DragEnd = delegate {  };
@@ -22,6 +22,7 @@ namespace INVedit
 		public Image Default { get; set; }
 		
 		public event Action<ItemSlot> DragDone = delegate {  };
+		public event Action<ItemSlot> Changed = delegate {  };
 		
 		public ItemSlot(byte slot)
 		{
@@ -63,15 +64,17 @@ namespace INVedit
 				Item item = (Item)e.Data.GetData(typeof(Item));
 				if (Item != item) {
 					if ((e.AllowedEffect & DragDropEffects.Move) == DragDropEffects.Move) {
-						if ((e.KeyState & 8) == 8) e.Effect = DragDropEffects.Copy;
-						else if ((e.KeyState & 32) == 32 && item.Count > 1) {
+						if ((Control.ModifierKeys & Keys.Control) == Keys.Control)
+							e.Effect = DragDropEffects.Copy;
+						else if ((Control.ModifierKeys & Keys.Alt) == Keys.Alt && item.Count > 1) {
 							if (Item != null) {
-								if (Item.ID == item.ID && item.Stackable && Item.Count < 64)
+								if (Item.ID == item.ID && Item.Count < item.Stack)
 									e.Effect = DragDropEffects.Link;
 								else e.Effect = DragDropEffects.None;
 							} else e.Effect = DragDropEffects.Link;
 						} else if (Item != null && Item.ID == item.ID &&
-						           Item.Count >= (item.Stackable ? 64 : 1)) {
+						           Item.Damage == item.Damage &&
+						           Item.Count + item.Count >= item.Stack) {
 							e.Effect = DragDropEffects.None;
 						} else e.Effect = DragDropEffects.Move;
 					} else e.Effect = DragDropEffects.Copy;
@@ -93,34 +96,46 @@ namespace INVedit
 					Item.Count = Math.Min((byte)(count+item.Count/2), (byte)64);
 					item.Count -= (byte)(Item.Count-count);
 				}
-			} else if (e.Effect == DragDropEffects.Move && Item != null && item.ID == Item.ID) {
-				byte count = (byte)Math.Min((int)Item.Count + item.Count, item.Stackable ? 64 : 1);
-				byte over = (byte)Math.Max((int)Item.Count + item.Count - (item.Stackable ? 64 : 1), 0);
+			} else if (e.Effect == DragDropEffects.Move && Item != null && item.ID == Item.ID && Item.Damage == item.Damage) {
+				byte count = (byte)Math.Min((int)Item.Count + item.Count, item.Stack);
+				byte over = (byte)Math.Max((int)Item.Count + item.Count - item.Stack, 0);
 				Item = new Item(Item.ID, count, Slot, Item.Damage);
-				other = over>0 ? new Item(Item.ID, over) : null;
+				other = (over>0) ? new Item(Item.ID, over) : null;
 			} else {
 				other = Item; Item = item;
 				if (e.Effect == DragDropEffects.Copy)
 					Item = new Item(Item.ID, Item.Count, Slot, Item.Damage);
 				else Item.Slot = Slot;
-				toolTip.SetToolTip(this, Item.Name);
-				toolTip.Active = true;
 			}
 			LostFocus += OnLostFocus;
 			Select();
 		}
 		
-		public void Set(short id, byte count, short damage)
+		protected override void OnMouseWheel(MouseEventArgs e)
 		{
-			Item = new Item(id, count, Slot, damage);
-			toolTip.SetToolTip(this, Item.Name);
-			toolTip.Active = true;
-		}
-		
-		public void Clear()
-		{
-			Item = null;
-			toolTip.Active = false;
+			if (Item == null) return;
+			int count = (((Control.ModifierKeys & Keys.Control) == Keys.Control) ? 4 : 1) * Math.Sign(e.Delta);
+			if ((Control.ModifierKeys & Keys.Shift) == Keys.Shift) {
+				int before = Item.Damage;
+				if (Item.MaxDamage > 0)
+					Item.Damage = (short)Math.Min(Math.Max((int)Item.Damage + Math.Max(Math.Abs(count*(int)Item.MaxDamage/32), 1) * -Math.Sign(count), 0), Item.MaxDamage);
+				else if (Item.Alternative) {
+					Dictionary<short, Data.Item> items = Data.items[Item.ID];
+					List<short> list = new List<short>(items.Keys);
+					int index = list.IndexOf(Item.Damage);
+					if (index == -1) return;
+					if (count > 0) { if (index < list.Count-1) Item.Damage = list[index+1]; }
+					else { if (index > 0) Item.Damage = list[index-1]; }
+				} if (before == Item.Damage) return;
+			} else {
+				if (Item.Stack==1) return;
+				int before = Item.Count;
+				if (Item.Count == 1 && count == 4) count = 3;
+				Item.Count = (byte)Math.Min(Math.Max((int)Item.Count + count, 1), Item.Stack);
+				if (before == Item.Count) return;
+			}
+			Refresh();
+			Changed(this);
 		}
 		
 		protected override void OnPaint(PaintEventArgs e)
@@ -159,9 +174,8 @@ namespace INVedit
 				string value = Item.Count.ToString();
 				Color color1 = Color.Black;
 				Color color2 = Color.White;
-				if (Item.Count > (Item.Stackable ? 64 : 1)) {
+				if (Item.Count > Item.Stack)
 					color1 = Color.FromArgb(172, 0, 0);
-				}
 				DrawString2(g, color1, 3, 1, value);
 				DrawString2(g, color1, 4, 1, value);
 				DrawString2(g, color1, 2, 2, value);
@@ -171,7 +185,7 @@ namespace INVedit
 				DrawString2(g, color2, 3, 2, value);
 				DrawString2(g, color2, 4, 2, value);
 			}
-			if (Item.Damage != 0) {
+			if (!Data.items[Item.ID].ContainsKey(Item.Damage)) {
 				if (Item.Damage > 0 && Item.Damage <= Item.MaxDamage && Item.MaxDamage > 0) {
 					Rectangle rect = new Rectangle(5, ClientSize.Height-8, ClientSize.Width-10, 3);
 					g.FillRectangle(new SolidBrush(Color.Black), rect);

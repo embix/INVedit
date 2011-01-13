@@ -13,7 +13,7 @@ namespace INVedit
 	{
 		static readonly Dictionary<string, Image> images = new Dictionary<string, Image>();
 		public static readonly ImageList list = new ImageList(){ ColorDepth = ColorDepth.Depth32Bit };
-		public static readonly Dictionary<short, Item> items = new Dictionary<short, Item>();
+		public static readonly Items items = new Items();
 		public static readonly Dictionary<string, Group> groups = new Dictionary<string, Group>();
 		public static Image unknown;
 		public static int version = int.MinValue;
@@ -22,6 +22,7 @@ namespace INVedit
 		{
 			ResourceManager resources = new ResourceManager("INVedit.Resources", typeof(Data).Assembly);
 			unknown = (Image)resources.GetObject("unknown");
+			list.Images.Add(unknown);
 			
 			string[] lines = File.ReadAllLines(path);
 			for (int i = 1; i <= lines.Length; ++i) {
@@ -50,14 +51,14 @@ namespace INVedit
 						try { icon = short.Parse(split[2]); }
 						catch (Exception e) { throw new DataException("Failed to parse column 'ICON' at line "+i+" in file '"+path+"'.", e); }
 						if (!items.ContainsKey(icon)) throw new DataException("Invalid item id '"+icon+"' in column 'ICON' at line "+i+" in file '"+path+"'.");
-						int imageIndex = items[icon].imageIndex;
+						int imageIndex = items[icon][0].imageIndex;
 						string[] l = split[3].Split(new char[]{','}, StringSplitOptions.RemoveEmptyEntries);
 						Group group = new Group(name, imageIndex);
 						foreach (string n in l) {
 							short s;
 							try { s = short.Parse(n); }
 							catch (Exception e) { throw new DataException("Failed to parse column 'ITEMS' at line "+i+" in file '"+path+"'.", e); }
-							if (items.ContainsKey(s)) group.Add(items[s]);
+							if (items.ContainsKey(s)) foreach (Item item in items[s].Values) group.Add(item);
 							else MessageBox.Show("Invalid item id '"+s+"' in column 'ITEMS' at line "+i+" in file '"+path+"'.",
 							                     "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 						}
@@ -78,15 +79,36 @@ namespace INVedit
 						} catch (Exception e) { throw new DataException("Failed to parse column 'CORDS' at line "+i+" in file '"+path+"'.", e); }
 						if (x < 0 || y < 0 || x*16+16 > image.Width || y*16+16 > image.Height)
 							throw new DataException("Invalid image cords "+x+","+y+" at line "+i+" in file '"+path+"'.");
-						bool stackable = true;
+						byte stack = 64;
+						short damage = 0;
 						short maxDamage = 0;
 						if (split.Length == 5) {
-							stackable = false;
-							try { maxDamage = short.Parse(split[4]); }
+							string str = split[4];
+							char chr = ' ';
+							if (str[0]=='+' || str[0]=='x') {
+								chr = str[0];
+								str = str.Substring(1, str.Length-1);
+							}
+							short val;
+							try { val = short.Parse(str); }
 							catch (Exception e) { throw new DataException("Failed to parse column 'DAMAGE' at line "+i+" in file '"+path+"'.", e); }
-							if (maxDamage < 0) throw new DataException("Failed to parse column 'DAMAGE' at line "+i+" in file '"+path+"'.");
+							switch (chr) {
+								case '+':
+									if (val <= 0) throw new DataException("Failed to parse column 'DAMAGE' at line "+i+" in file '"+path+"'.");
+									stack = 1;
+									maxDamage = val;
+									break;
+								case 'x':
+									if (val <= 0) throw new DataException("Failed to parse column 'DAMAGE' at line "+i+" in file '"+path+"'.");
+									if (val > 255) throw new DataException("Failed to parse column 'DAMAGE' at line "+i+" in file '"+path+"'.");
+									stack = (byte)val;
+									break;
+								default:
+									damage = val;
+									break;
+							}
 						}
-						items.Add(id, new Item(id, name, stackable, maxDamage, image, x, y));
+						items.Add(new Item(id, name, stack, damage, maxDamage, image, x, y));
 					}
 				} catch (Exception e) {
 					if (MessageBox.Show(e.Message, "Warning", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.Cancel)
@@ -105,19 +127,32 @@ namespace INVedit
 			}
 		}
 		
+		internal class Items : Dictionary<short, Dictionary<short, Item>>
+		{
+			public void Add(Item item)
+			{
+				Dictionary<short, Item> list;
+				if (ContainsKey(item.id)) list = this[item.id];
+				else { list = new Dictionary<short, Item>(); Add(item.id, list); }
+				list.Add(item.damage, item);
+			}
+		}
+		
 		internal class Item
 		{
 			public readonly short id;
 			public readonly string name;
-			public readonly bool stackable;
+			public readonly byte stack;
+			public readonly short damage;
 			public readonly short maxDamage;
 			public readonly int imageIndex;
 			
-			internal Item(short id, string name, bool stackable, short maxDamage, Image image, int x, int y)
+			internal Item(short id, string name, byte stack, short damage, short maxDamage, Image image, int x, int y)
 			{
 				this.id = id;
 				this.name = name;
-				this.stackable = stackable;
+				this.stack = stack;
+				this.damage = damage;
 				this.maxDamage = maxDamage;
 				
 				Bitmap b = new Bitmap(16, 16);
