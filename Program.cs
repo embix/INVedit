@@ -17,10 +17,6 @@ namespace INVedit
 		static void Main(string[] args)
 		{
 			Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
-			
-			try { Assembly.Load("NBT"); }
-			catch { MessageBox.Show("Error", "Couldn't load NBT.dll."); return; }
-			
 			if (args.Length > 0) switch (args[0]) {
 				case "-update":
 					while (true) {

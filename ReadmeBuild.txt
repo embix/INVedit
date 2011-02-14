@@ -1,0 +1,1 @@
+How to Build and Run?1) get the items.txt, items.png, special.png, terrain.png (dunno which license they are)2) get/create a .pfx for code signing, add this certificate to your trusted software vendors3) build a Release using Click Once
