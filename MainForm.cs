@@ -4,10 +4,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Resources;
-using System.Net;
-using System.ComponentModel;
-using System.Diagnostics;
-
 using NBT;
 
 namespace INVedit
@@ -25,23 +21,15 @@ namespace INVedit
 		}
 		
 		List<CheckBox> groups = new List<CheckBox>();
-		
-		string url = "http://copy.mcft.net/mc/INVedit";
-		WebClient client = new WebClient();
-		List<string> download;
-		List<byte[]> files;
-		int current;
+
+	    const string Url = "http://copy.mcft.net/mc/INVedit";
 		
 		public MainForm(string[] files)
 		{
 			InitializeComponent();
 			
 			Data.Init("items.txt");
-			
-			client.DownloadStringCompleted += VersionCompleted;
-			client.DownloadDataCompleted += FileCompleted;
-			client.DownloadProgressChanged += FileProgress;
-			
+		
 			boxItems.LargeImageList = Data.list;
 			boxItems.ItemDrag += ItemDrag;
 			
@@ -346,76 +334,7 @@ namespace INVedit
 		
 		void BtnUpdateClick(object sender, EventArgs e)
 		{
-			switch (btnUpdate.Text) {
-				case "Check for updates":
-					btnUpdate.Text = "Checking ...";
-					btnUpdate.Enabled = false;
-					client.DownloadStringAsync(new Uri(url+"/version"));
-					break;
-				case "Download":
-					btnUpdate.Text = "";
-					btnUpdate.Enabled = false;
-					barUpdate.Visible = true;
-					barUpdate.Value = 0;
-					barUpdate.Maximum = download.Count*100;
-					int current = 0;
-					files = new List<byte[]>();
-					Uri uri = new Uri(url+"/"+download[current]);
-					client.DownloadDataAsync(uri);
-					break;
-				case "Restart":
-					for (int i=0;i<download.Count;++i) {
-						string name = download[i];
-						byte[] data = files[i];
-						if (name == "INVedit.exe") { name = "_"+name; }
-						File.WriteAllBytes(name,data);
-					} if (File.Exists("_INVedit.exe")) {
-						Process.Start("_INVedit.exe", "-update");
-					} else { Process.Start("INVedit.exe"); }
-					Application.Exit();
-					break;
-			}
-		}
-		void VersionCompleted(object sender, DownloadStringCompletedEventArgs e)
-		{
-			if (e.Error!=null) {
-				btnUpdate.Text = "Error while checking for updates";
-				return;
-			} int version = 1;
-			string[] lines = e.Result.Split(new string[]{ "\r\n" }, StringSplitOptions.None);
-			download = new List<string>();
-			foreach (string line in lines) {
-				if (line == "") ++version;
-				else if (version > Data.version &&
-				         !download.Contains(line)) download.Add(line);
-			} if (download.Count > 0) {
-				btnUpdate.Text = "Download";
-				btnUpdate.Enabled = true;
-			} else {
-				btnUpdate.Text = "No update available";
-			}
-		}
-		void FileProgress(object sender, DownloadProgressChangedEventArgs e)
-		{
-			barUpdate.Value = current*100 + e.ProgressPercentage;
-		}
-		void FileCompleted(object sender, DownloadDataCompletedEventArgs e)
-		{
-			if (e.Error!=null) {
-				btnUpdate.Text = "Download";
-				btnUpdate.Enabled = true;
-				barUpdate.Visible = false;
-				throw e.Error;
-			} files.Add(e.Result);
-			++current;
-			if (current == download.Count) {
-				btnUpdate.Text = "Restart";
-				btnUpdate.Enabled = true;
-				barUpdate.Visible = false;
-			} else {
-				Uri uri = new Uri(url+"/"+download[current]);
-				client.DownloadDataAsync(uri);
-			}
+            MessageBox.Show("Use ClickOnce Updates for this Branch\nTry the 'original' INVedit from " + Url);
 		}
 	}
 }

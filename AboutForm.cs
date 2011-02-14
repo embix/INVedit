@@ -1,6 +1,4 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -26,5 +24,10 @@ namespace INVedit
 		{
 			Process.Start("http://www.famfamfam.com/lab/icons/silk/");
 		}
+
+        private void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("http://github.com/embix/INVedit");
+        }
 	}
 }
