@@ -37,17 +37,37 @@ namespace INVedit
 		
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
-			if (e.Button != MouseButtons.Left) return;
-			LostFocus += OnLostFocus;
-			if (Item == null) return;
-			Checked = true;
-			DragBegin(this);
-			other = Item;
-			DragDropEffects final = DoDragDrop(Item, DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
-			DragEnd(this);
-			if (final == DragDropEffects.Move) { Item = other; }
-			Checked = false;
-			DragDone(this);
+            LostFocus += OnLostFocus;
+            if (Item == null) return;
+		    switch (e.Button)
+		    {
+		        case MouseButtons.Left:
+                    Checked = true;
+                    DragBegin(this);
+                    other = Item;
+                    DragDropEffects final = DoDragDrop(Item, DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
+                    DragEnd(this);
+                    if (final == DragDropEffects.Move) { Item = other; }
+                    Checked = false;
+                    DragDone(this);
+		            break;
+		        case MouseButtons.None:
+		            break;
+		        case MouseButtons.Right:
+                    // if ItemSlot contains item, set amount to max/damage to zero
+		            Item.Count = Item.Stack;
+                    if (!Item.Alternative) Item.Damage = 0;
+		            break;
+		        case MouseButtons.Middle:
+		            break;
+		        case MouseButtons.XButton1:
+		            break;
+		        case MouseButtons.XButton2:
+		            break;
+		        default:
+		            throw new ArgumentOutOfRangeException();
+		    }
+            Refresh();
 		}
 		
 		void OnLostFocus(object sender, EventArgs e)
@@ -185,6 +205,7 @@ namespace INVedit
 				DrawString2(g, color2, 3, 2, value);
 				DrawString2(g, color2, 4, 2, value);
 			}
+            // BUG: Crashes, when item in inventory, which is not in items.txt
 			if (!Data.items[Item.ID].ContainsKey(Item.Damage)) {
 				if (Item.Damage > 0 && Item.Damage <= Item.MaxDamage && Item.MaxDamage > 0) {
 					Rectangle rect = new Rectangle(5, ClientSize.Height-8, ClientSize.Width-10, 3);
