@@ -48,17 +48,17 @@ namespace INVedit
 			foreach (Data.Group group in Data.groups.Values) {
 				CheckBox box = new CheckBox();
 				box.Size = new Size(26, 26);
-				box.Location = new Point(Width-189, 29 + groups.Count*27);
+				box.Location = new Point(Width-189 + (groups.Count / 12) * 27, 29 + (groups.Count % 12) * 27);
 				box.ImageList = Data.list;
 				box.ImageIndex = group.imageIndex;
 				box.Appearance = Appearance.Button;
-				box.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 				box.Checked = true;
 				box.Tag = group;
 				box.MouseDown += ItemMouseDown;
 				Controls.Add(box);
 				groups.Add(box);
 			}
+			Width += ((groups.Count-1) / 12) * 27;
 			
 			UpdateItems();
 			
@@ -81,16 +81,17 @@ namespace INVedit
 				page.file = info.FullName;
 				if (info.Name == "level.dat") { page.Text = info.Directory.Name; }
 				else { page.Text = info.Name; }
+				Text = "INVedit - "+page.Text;
+				page.changed = false;
+				btnSave.Enabled = true;
+				btnCloseTab.Enabled = true;
+				btnReload.Enabled = true;
 				Tag tag = NBT.Tag.Load(file);
 				if (tag.Type==TagType.Compound && tag.Contains("Data")) { tag = tag["Data"]; }
 				if (tag.Type==TagType.Compound && tag.Contains("Player")) { tag = tag["Player"]; }
 				if (tag.Type==TagType.Compound && tag.Contains("Inventory")) { tag = tag["Inventory"]; }
 				if (tag.Name != "Inventory") { throw new Exception("Can't find Inventory tag."); }
 				Inventory.Load(tag, page.slots);
-				Text = "INVedit - "+page.Text;
-				btnSave.Enabled = true;
-				btnCloseTab.Enabled = true;
-				btnReload.Enabled = true;
 			} catch (Exception ex) { MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
 		}
 		
@@ -98,6 +99,14 @@ namespace INVedit
 		{
 			try {
 				FileInfo info = new FileInfo(file);
+				if (info.Exists && page.file != info.FullName) {
+					string str;
+					if (info.Name == "level.dat")
+						str = "Are you sure you want to overwrite "+info.Directory.Name+"?";
+					else str = "Are you sure you want to overwrite '"+info.Name+"'?";
+					DialogResult result = MessageBox.Show(str, "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+					if (result != DialogResult.Yes) return;
+				}
 				page.file = info.FullName;
 				Tag root,tag;
 				if (info.Exists) {
@@ -105,8 +114,9 @@ namespace INVedit
 					tag = root;
 				} else {
 					if (info.Extension.ToLower() == ".dat") {
-						MessageBox.Show("You can create a new Minecraft file. Select an existing one instead.",
-						                "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						MessageBox.Show("You can't create a new Minecraft level file.\n"+
+						                "Select an existing one instead.", "Error",
+						                MessageBoxButtons.OK, MessageBoxIcon.Error);
 						return;
 					} root = NBT.Tag.Create("Inventory");
 					tag = root;
@@ -118,6 +128,7 @@ namespace INVedit
 				if (info.Name == "level.dat") { page.Text = info.Directory.Name; }
 				else { page.Text = info.Name; }
 				Text = "INVedit - "+page.Text;
+				page.changed = false;
 				btnReload.Enabled = true;
 			} catch (Exception ex) { MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
 		}
@@ -213,7 +224,7 @@ namespace INVedit
 		{
 			if (e.Button != MouseButtons.Left) return;
 			Item item = (Item)((ListViewItem)e.Item).Tag;
-			item = new Item(item.ID, 1, 0, item.Damage);
+			item = new Item(item.ID, item.Stack, 0, item.Damage);
 			DoDragDrop(item, DragDropEffects.Copy | DragDropEffects.Move);
 		}
 		
@@ -231,22 +242,43 @@ namespace INVedit
 		
 		void BtnOpenClick(object sender, EventArgs e)
 		{
-			if (openFileDialog.ShowDialog() == DialogResult.OK) {
+			if (openFileDialog.ShowDialog() == DialogResult.OK)
 				Open(openFileDialog.FileName);
-			}
 		}
 		
 		void BtnSaveClick(object sender, EventArgs e)
 		{
 			Page page = (Page)tabControl.SelectedTab;
 			saveFileDialog.FileName = page.file;
-			if (saveFileDialog.ShowDialog() == DialogResult.OK) {
+			if (saveFileDialog.ShowDialog() == DialogResult.OK)
 				Save(page, saveFileDialog.FileName);
+		}
+		
+		void BtnReloadClick(object sender, EventArgs e)
+		{
+			if (((Page)tabControl.SelectedTab).changed) {
+				DialogResult result = MessageBox.Show(
+					"Are you sure you want to reload this tab?\n"+
+					"All unsaved changes will be lost.", "Question",
+					MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+				if (result != DialogResult.Yes) return;
 			}
+			try {
+				Page page = (Page)tabControl.SelectedTab;
+				Open(page, page.file);
+			} catch (Exception ex) { MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
 		}
 		
 		void BtnCloseTabClick(object sender, EventArgs e)
 		{
+			if (((Page)tabControl.SelectedTab).changed) {
+				DialogResult result = MessageBox.Show(
+					"Are you sure you want to close this tab?\n"+
+					"All unsaved changes will be lost.", "Question",
+					MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+				if (result != DialogResult.Yes) return;
+			}
+			
 			tabControl.TabPages.Remove(tabControl.SelectedTab);
 			if (tabControl.TabPages.Count == 0) {
 				btnSave.Enabled = false;
@@ -259,13 +291,27 @@ namespace INVedit
 			new AboutForm().ShowDialog();
 		}
 		
+		void MainFormFormClosing(object sender, FormClosingEventArgs e)
+		{
+			foreach (TabPage page in tabControl.TabPages)
+				if (((Page)page).changed) {
+				DialogResult result = MessageBox.Show(
+					"Are you sure you want to close INVedit?\n"+
+					"There still are unsaved inventory tabs.", "Question",
+					MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+				if (result != DialogResult.Yes) e.Cancel = true;
+				break;
+			}
+		}
+		
 		void TabControlDragOver(object sender, DragEventArgs e)
 		{
 			Point point = tabControl.PointToClient(new Point(e.X, e.Y));
 			TabPage hover = null;
 			for (int i = 0; i < tabControl.TabPages.Count; ++i)
 				if (tabControl.GetTabRect(i).Contains(point)) {
-				hover = tabControl.TabPages[i]; break;
+				hover = tabControl.TabPages[i];
+				break;
 			}
 			if (hover == null) return;
 			if (!e.Data.GetDataPresent(typeof(Item))) return;
@@ -284,33 +330,18 @@ namespace INVedit
 			
 		}
 		
-		void BtnReloadClick(object sender, EventArgs e)
-		{
-			try {
-				Page page = (Page)tabControl.SelectedTab;
-				Open(page, page.file);
-			} catch (Exception ex) { MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
-		}
-		
 		void BtnOpenDropDownOpening(object sender, EventArgs e)
 		{
 			btnOpen.DropDownItems.Clear();
 			ResourceManager resources = new ResourceManager("INVedit.Resources", GetType().Assembly);
-			for (int i=1;i<=5;i+=1) {
-				ToolStripItem item = btnOpen.DropDownItems.Add("Open World"+i);
-				item.Image = (Image)resources.GetObject("world"+i);
-				string file = appdata+"/saves/World"+i+"/level.dat";
-				item.Enabled = File.Exists(file);
-				item.Tag = file;
-			} Image world = (Image)resources.GetObject("world");
+			Image world = (Image)resources.GetObject("world");
 			DirectoryInfo dirs = new DirectoryInfo(appdata+"/saves");
 			if (dirs.Exists) foreach (DirectoryInfo dir in dirs.GetDirectories()) {
-				if (dir.GetFiles("level.dat").Length > 0 && dir.Name != "World1" && dir.Name != "World2" &&
-				    dir.Name != "World3" && dir.Name != "World4" && dir.Name != "World5") {
-					ToolStripItem item = btnOpen.DropDownItems.Add("Open "+dir.Name, world);
+				if (dir.GetFiles("level.dat").Length > 0) {
+					ToolStripItem item = btnOpen.DropDownItems.Add("Open from „"+dir.Name+"“", world);
 					item.Tag = dir.FullName+"/level.dat";
 				}
-			} if (btnOpen.DropDownItems.Count>5) { btnOpen.DropDownItems.Insert(5, new ToolStripSeparator()); }
+			}
 		}
 		
 		void BtnOpenDropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -322,20 +353,14 @@ namespace INVedit
 		{
 			btnSave.DropDownItems.Clear();
 			ResourceManager resources = new ResourceManager("INVedit.Resources", GetType().Assembly);
-			for (int i=1;i<=5;i+=1) {
-				ToolStripItem item = btnSave.DropDownItems.Add("Save World"+i);
-				item.Image = (Image)resources.GetObject("world"+i);
-				string file = appdata+"/saves/World"+i+"/level.dat";
-				item.Enabled = File.Exists(file);
-				item.Tag = file;
-			} Image world = (Image)resources.GetObject("world");
-			foreach (DirectoryInfo dir in new DirectoryInfo(appdata+"/saves").GetDirectories()) {
-				if (dir.GetFiles("level.dat").Length > 0 && dir.Name != "World1" && dir.Name != "World2" &&
-				    dir.Name != "World3" && dir.Name != "World4" && dir.Name != "World5") {
-					ToolStripItem item = btnSave.DropDownItems.Add("Save "+dir.Name, world);
+			Image world = (Image)resources.GetObject("world");
+			DirectoryInfo dirs = new DirectoryInfo(appdata+"/saves");
+			if (dirs.Exists) foreach (DirectoryInfo dir in dirs.GetDirectories()) {
+				if (dir.GetFiles("level.dat").Length > 0) {
+					ToolStripItem item = btnSave.DropDownItems.Add("Save to „"+dir.Name+"“", world);
 					item.Tag = dir.FullName+"/level.dat";
 				}
-			} if (btnOpen.DropDownItems.Count>5) { btnSave.DropDownItems.Insert(5, new ToolStripSeparator()); }
+			}
 		}
 		
 		void BtnSaveDropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -367,11 +392,12 @@ namespace INVedit
 					for (int i=0;i<download.Count;++i) {
 						string name = download[i];
 						byte[] data = files[i];
-						if (name == "INVedit.exe") { name = "_"+name; }
+						if (name == "INVedit.exe" ||
+						    name == "NBT.dll") { name = "_"+name; }
 						File.WriteAllBytes(name,data);
 					} if (File.Exists("_INVedit.exe")) {
-						Process.Start("_INVedit.exe", "-update");
-					} else { Process.Start("INVedit.exe"); }
+						Process.Start("_INVedit.exe","-update");
+					} else { Process.Start("INVedit.exe","-update"); }
 					Application.Exit();
 					break;
 			}

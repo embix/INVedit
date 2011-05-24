@@ -17,8 +17,8 @@ namespace INVedit
 			this.disabled = disabled;
 			Enabled = false;
 			
-			DragBegin += delegate { Enabled = true; };
-			DragEnd += delegate { Enabled = false; };
+			DragBegin += delegate { Enabled = true; Refresh(); };
+			DragEnd += delegate { Enabled = false; Refresh(); };
 		}
 		
 		protected override void OnEnabledChanged(EventArgs e)

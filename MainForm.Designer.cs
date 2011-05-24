@@ -168,9 +168,8 @@ namespace INVedit
 			// tabControl
 			// 
 			this.tabControl.AllowDrop = true;
-			this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-									| System.Windows.Forms.AnchorStyles.Left) 
-									| System.Windows.Forms.AnchorStyles.Right)));
+			this.tabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+									| System.Windows.Forms.AnchorStyles.Left)));
 			this.tabControl.Location = new System.Drawing.Point(5, 29);
 			this.tabControl.Name = "tabControl";
 			this.tabControl.SelectedIndex = 0;
@@ -208,6 +207,7 @@ namespace INVedit
 			// 
 			// boxSearch
 			// 
+			this.boxSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.boxSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.boxSearch.ForeColor = System.Drawing.Color.Gray;
 			this.boxSearch.Location = new System.Drawing.Point(518, 29);
@@ -216,8 +216,8 @@ namespace INVedit
 			this.boxSearch.TabIndex = 2;
 			this.boxSearch.Text = "Search...";
 			this.boxSearch.TextChanged += new System.EventHandler(this.BoxSearchTextChanged);
-			this.boxSearch.Leave += new System.EventHandler(this.BoxSearchLeave);
 			this.boxSearch.Enter += new System.EventHandler(this.BoxSearchEnter);
+			this.boxSearch.Leave += new System.EventHandler(this.BoxSearchLeave);
 			// 
 			// MainForm
 			// 
@@ -233,11 +233,13 @@ namespace INVedit
 			this.MaximizeBox = false;
 			this.Name = "MainForm";
 			this.Text = "INVedit - Minecraft Inventory Editor";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFormFormClosing);
 			this.toolStrip.ResumeLayout(false);
 			this.toolStrip.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 		}
+		private System.Windows.Forms.ToolStripButton btnAbout;
 		private System.Windows.Forms.TextBox boxSearch;
 		private System.Windows.Forms.ToolStripProgressBar barUpdate;
 		private System.Windows.Forms.ToolStripButton btnUpdate;
@@ -247,7 +249,6 @@ namespace INVedit
 		private System.Windows.Forms.OpenFileDialog openFileDialog;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog;
 		private System.Windows.Forms.TabControl tabControl;
-		private System.Windows.Forms.ToolStripButton btnAbout;
 		private System.Windows.Forms.ListView boxItems;
 		private System.Windows.Forms.ToolStripSplitButton btnSave;
 		private System.Windows.Forms.ToolStrip toolStrip;

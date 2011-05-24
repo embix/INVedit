@@ -13,16 +13,15 @@ namespace INVedit
 		static Font font2 = new Font(FontFamily.GenericMonospace, 10, FontStyle.Bold);
 		protected static Item other = null;
 		
-		protected static event Action<ItemSlot> DragBegin = delegate {  };
-		protected static event Action<ItemSlot> DragEnd = delegate {  };
+		protected static event Action DragBegin = delegate {  };
+		protected static event Action DragEnd = delegate {  };
 		
 		public bool Selected { get; set; }
 		public byte Slot { get; set; }
 		public Item Item { get; set; }
 		public Image Default { get; set; }
 		
-		public event Action<ItemSlot> DragDone = delegate {  };
-		public event Action<ItemSlot> Changed = delegate {  };
+		public event Action Changed = delegate {  };
 		
 		public ItemSlot(byte slot)
 		{
@@ -41,13 +40,13 @@ namespace INVedit
 			LostFocus += OnLostFocus;
 			if (Item == null) return;
 			Checked = true;
-			DragBegin(this);
+			DragBegin();
 			other = Item;
 			DragDropEffects final = DoDragDrop(Item, DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
-			DragEnd(this);
+			DragEnd();
 			if (final == DragDropEffects.Move) { Item = other; }
 			Checked = false;
-			DragDone(this);
+			Changed();
 		}
 		
 		void OnLostFocus(object sender, EventArgs e)
@@ -56,7 +55,14 @@ namespace INVedit
 			Refresh();
 		}
 		
-		protected override void OnKeyDown(KeyEventArgs e) {  }
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			if ((e.KeyCode & Keys.Delete) != Keys.Delete) return;
+			if (Item == null) return;
+			Item = null;
+			Changed();
+			Refresh();
+		}
 		
 		protected override void OnDragOver(DragEventArgs e)
 		{
@@ -68,13 +74,12 @@ namespace INVedit
 							e.Effect = DragDropEffects.Copy;
 						else if ((Control.ModifierKeys & Keys.Alt) == Keys.Alt && item.Count > 1) {
 							if (Item != null) {
-								if (Item.ID == item.ID && Item.Count < item.Stack)
+								if (Item.ID == item.ID && Item.Count <= item.Stack)
 									e.Effect = DragDropEffects.Link;
 								else e.Effect = DragDropEffects.None;
 							} else e.Effect = DragDropEffects.Link;
 						} else if (Item != null && Item.ID == item.ID &&
-						           Item.Damage == item.Damage &&
-						           Item.Count + item.Count >= item.Stack) {
+						           Item.Damage == item.Damage && Item.Count >= Item.Stack) {
 							e.Effect = DragDropEffects.None;
 						} else e.Effect = DragDropEffects.Move;
 					} else e.Effect = DragDropEffects.Copy;
@@ -108,7 +113,8 @@ namespace INVedit
 				else Item.Slot = Slot;
 			}
 			LostFocus += OnLostFocus;
-			Select();
+			Changed();
+			Focus();
 		}
 		
 		protected override void OnMouseWheel(MouseEventArgs e)
@@ -134,8 +140,8 @@ namespace INVedit
 				Item.Count = (byte)Math.Min(Math.Max((int)Item.Count + count, 1), Item.Stack);
 				if (before == Item.Count) return;
 			}
+			Changed();
 			Refresh();
-			Changed(this);
 		}
 		
 		protected override void OnPaint(PaintEventArgs e)
@@ -185,13 +191,14 @@ namespace INVedit
 				DrawString2(g, color2, 3, 2, value);
 				DrawString2(g, color2, 4, 2, value);
 			}
-			if (!Data.items[Item.ID].ContainsKey(Item.Damage)) {
+			if (Data.items.ContainsKey(Item.ID) &&
+			    !Data.items[Item.ID].ContainsKey(Item.Damage)) {
 				if (Item.Damage > 0 && Item.Damage <= Item.MaxDamage && Item.MaxDamage > 0) {
 					Rectangle rect = new Rectangle(5, ClientSize.Height-8, ClientSize.Width-10, 3);
 					g.FillRectangle(new SolidBrush(Color.Black), rect);
 					byte b = (byte)(Item.Damage*255/Item.MaxDamage);
 					Color color = Color.FromArgb(b, 255-b, 0);
-					int width = (int)((1-(double)(Item.Damage-1)/(Item.MaxDamage-1))*(ClientSize.Width-10));
+					int width = (int)((1-(double)Item.Damage/Item.MaxDamage)*(ClientSize.Width-10));
 					rect = new Rectangle(5, ClientSize.Height-8, width, 3);
 					g.FillRectangle(new SolidBrush(color), rect);
 				} else {

@@ -54,13 +54,25 @@ namespace INVedit
 						int imageIndex = items[icon][0].imageIndex;
 						string[] l = split[3].Split(new char[]{','}, StringSplitOptions.RemoveEmptyEntries);
 						Group group = new Group(name, imageIndex);
-						foreach (string n in l) {
+						foreach (string nn in l) {
+							string n = nn;
 							short s;
+							short d = -1;
+							if (n.IndexOf('~') != -1) {
+								string[] sp = n.Split('~');
+								n = sp[0];
+								try { d = short.Parse(sp[1]); }
+								catch (Exception e) { throw new DataException("Failed to parse column 'ITEMS' at line "+i+" in file '"+path+"'.", e); }
+							}
 							try { s = short.Parse(n); }
 							catch (Exception e) { throw new DataException("Failed to parse column 'ITEMS' at line "+i+" in file '"+path+"'.", e); }
-							if (items.ContainsKey(s)) foreach (Item item in items[s].Values) group.Add(item);
-							else MessageBox.Show("Invalid item id '"+s+"' in column 'ITEMS' at line "+i+" in file '"+path+"'.",
-							                     "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+							if (items.ContainsKey(s)) {
+								if (d == -1) foreach (Item item in items[s].Values) group.Add(item);
+								else if (items[s].ContainsKey(d)) group.Add(items[s][d]);
+								else MessageBox.Show("Invalid item damage '"+d+"' in column 'ITEMS' at line "+i+" in file '"+path+"'.",
+								                     "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+							} else MessageBox.Show("Invalid item id '"+s+"' in column 'ITEMS' at line "+i+" in file '"+path+"'.",
+							                       "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 						}
 						groups.Add(name, group);
 					} else {

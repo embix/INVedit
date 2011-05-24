@@ -19,6 +19,7 @@ namespace INVedit
 		
 		public string file = null;
 		public bool world = false;
+		public bool changed = false;
 		public Dictionary<byte, ItemSlot> slots = new Dictionary<byte, ItemSlot>();
 		
 		public Page()
@@ -90,20 +91,13 @@ namespace INVedit
 		}
 		void CreateSlot(byte slot, int x, int y, Image def)
 		{
-			ItemSlot itemSlot = new ItemSlot(slot){ Location = new Point(x, y), Default = def, UseVisualStyleBackColor = true };
-			itemSlot.GotFocus += SelectionChanged;
-			itemSlot.DragDone += ItemDragDrop;
-			itemSlot.Changed += delegate(ItemSlot s) {
-				SelectionChanged(s, new EventArgs());
+			ItemSlot itemSlot = new ItemSlot(slot){
+				Location = new Point(x, y), Default = def, UseVisualStyleBackColor = true
 			};
+			itemSlot.GotFocus += SelectionChanged;
+			itemSlot.Changed += ItemChanged;
 			boxInventory.Controls.Add(itemSlot);
 			slots.Add(slot, itemSlot);
-		}
-		
-		void ItemDragDrop(ItemSlot slot)
-		{
-			if (((TabControl)Parent).SelectedTab != this)
-				SelectionChanged(slot, new EventArgs());
 		}
 		
 		void BoxLostFocus(object sender, EventArgs e)
@@ -119,6 +113,12 @@ namespace INVedit
 			if (box == boxDamage) selected.Item.Damage = (short)box.Value;
 			if (box == boxCount) selected.Item.Count = (byte)box.Value;
 			selected.Refresh();
+			
+			if (!changed) {
+				changed = true;
+				Text += "*";
+				Parent.Parent.Text += "*";
+			}
 		}
 		
 		void SelectionChanged(object sender, EventArgs e)
@@ -142,6 +142,31 @@ namespace INVedit
 			
 			boxDamage.ValueChanged += ValueChanged;
 			boxCount.ValueChanged += ValueChanged;
+		}
+		
+		void ItemChanged()
+		{
+			if (((TabControl)Parent).SelectedTab == this &&
+			    selected != null) {
+				boxDamage.ValueChanged -= ValueChanged;
+				boxCount.ValueChanged -= ValueChanged;
+				
+				bool enabled = (selected.Item != null);
+				boxDamage.Enabled = enabled;
+				boxCount.Enabled = enabled;
+				boxDamage.Value = enabled ? (int)selected.Item.Damage : 0;
+				boxCount.Minimum = enabled ? 1 : 0;
+				boxCount.Value = enabled ? (int)selected.Item.Count : 0;
+				
+				boxDamage.ValueChanged += ValueChanged;
+				boxCount.ValueChanged += ValueChanged;
+			}
+			
+			if (!changed) {
+				changed = true;
+				Text += "*";
+				Parent.Parent.Text += "*";
+			}
 		}
 	}
 }
