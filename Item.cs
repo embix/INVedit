@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using Minecraft.NBT;
 
 namespace INVedit
 {
@@ -15,43 +16,49 @@ namespace INVedit
 			}
 		}
 		
-		public short ID { get; set; }
-		public byte Count { get; set; }
-		public byte Slot { get; set; }
-		public short Damage { get; set; }
+		public NbtTag tag;
+		public short ID { get { return (short)tag["id"]; }
+			set { tag["id"].Value = value; } }
+		public byte Count { get { return (byte)tag["Count"]; }
+			set { tag["Count"].Value = value; } }
+		public byte Slot { get { return (byte)tag["Slot"]; }
+			set { tag["Slot"].Value = value; } }
+		public short Damage { get { return (short)tag["Damage"]; }
+			set { tag["Damage"].Value = value; } }
 		
 		public bool Known { get { return (item != null); } }
-		public bool Alternative {
-			get {
+		public bool Alternative { get {
 				if (!Known) return false;
 				return (Data.items[ID].Count > 1);
-			}
-		}
-		public string Name {
-			get {
+			} }
+		public string Name { get {
 				if (!Known) return "Unknown item "+ID;
 				return item.name;
-			}
-		}
-		public byte Stack {
-			get {
+			} }
+		public byte Stack { get {
 				if (!Known) return 64;
 				return item.stack;
-			}
-		}
-		public short MaxDamage {
-			get {
+			} }
+		public byte Preferred { get {
+				if (!Known) return 64;
+				return item.preferred;
+			} }
+		public short MaxDamage { get {
 				if (!Known) return 0;
 				return item.maxDamage;
-			}
-		}
-		public Image Image {
-			get {
+			} }
+		public Image Image { get {
 				if (!Known) return Data.unknown;
 				return Data.list.Images[item.imageIndex];
-			}
-		}
+			} }
+		public bool Enchantable { get {
+				return Data.enchantable.Contains(ID);
+			} }
+		public bool Enchanted { get {
+				return tag.Contains("tag") && tag["tag"].Contains("ench");
+			} }
 		
+		public Item(NbtTag tag) { this.tag = tag.Clone(); }
 		public Item(short id)
 			: this(id, 1, 0, 0) {  }
 		public Item(short id, byte count)
@@ -60,10 +67,11 @@ namespace INVedit
 			: this(id, count, slot, 0) {  }
 		public Item(short id, byte count, byte slot, short damage)
 		{
-			ID = id;
-			Count = count;
-			Slot = slot;
-			Damage = damage;
+			tag = NbtTag.CreateCompound(
+				"id", id,
+				"Count", count,
+				"Slot", slot,
+				"Damage", damage);
 		}
 	}
 }

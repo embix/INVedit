@@ -3,5 +3,5 @@ using System.Reflection;
 
 [assembly: AssemblyTitle("INVedit")]
 [assembly: AssemblyProduct("INVedit")]
-[assembly: AssemblyCopyright("Copyright 2011")]
-[assembly: AssemblyVersion("0.9.15")]
+[assembly: AssemblyCopyright("Copyright 2012")]
+[assembly: AssemblyVersion("0.9.17")]

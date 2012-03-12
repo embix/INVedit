@@ -1,7 +1,7 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-# SharpDevelop 3.1.0.4977
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+# SharpDevelop 4.1.0.7915
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "INVedit", "INVedit.csproj", "{7FC14553-2FB1-4DC1-8C8D-ADBF6319D674}"
 EndProject
 Global

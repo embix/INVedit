@@ -42,11 +42,14 @@ namespace INVedit
 			this.btnOpen = new System.Windows.Forms.ToolStripSplitButton();
 			this.btnSave = new System.Windows.Forms.ToolStripSplitButton();
 			this.btnAbout = new System.Windows.Forms.ToolStripButton();
-			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.btnReload = new System.Windows.Forms.ToolStripButton();
 			this.btnCloseTab = new System.Windows.Forms.ToolStripButton();
 			this.btnUpdate = new System.Windows.Forms.ToolStripButton();
 			this.barUpdate = new System.Windows.Forms.ToolStripProgressBar();
+			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+			this.btnEnchant = new System.Windows.Forms.ToolStripButton();
+			this.labelVersion = new System.Windows.Forms.ToolStripLabel();
 			this.tabControl = new System.Windows.Forms.TabControl();
 			this.boxItems = new System.Windows.Forms.ListView();
 			this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
@@ -62,14 +65,17 @@ namespace INVedit
 									this.btnOpen,
 									this.btnSave,
 									this.btnAbout,
-									this.toolStripSeparator2,
+									this.toolStripSeparator1,
 									this.btnReload,
 									this.btnCloseTab,
 									this.btnUpdate,
-									this.barUpdate});
+									this.barUpdate,
+									this.toolStripSeparator2,
+									this.btnEnchant,
+									this.labelVersion});
 			this.toolStrip.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip.Name = "toolStrip";
-			this.toolStrip.Size = new System.Drawing.Size(672, 25);
+			this.toolStrip.Size = new System.Drawing.Size(684, 25);
 			this.toolStrip.TabIndex = 0;
 			// 
 			// btnNew
@@ -118,10 +124,10 @@ namespace INVedit
 			this.btnAbout.Text = "About";
 			this.btnAbout.Click += new System.EventHandler(this.BtnAboutClick);
 			// 
-			// toolStripSeparator2
+			// toolStripSeparator1
 			// 
-			this.toolStripSeparator2.Name = "toolStripSeparator2";
-			this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+			this.toolStripSeparator1.Name = "toolStripSeparator1";
+			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
 			// 
 			// btnReload
 			// 
@@ -165,6 +171,28 @@ namespace INVedit
 			this.barUpdate.Size = new System.Drawing.Size(100, 21);
 			this.barUpdate.Visible = false;
 			// 
+			// toolStripSeparator2
+			// 
+			this.toolStripSeparator2.Name = "toolStripSeparator2";
+			this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+			// 
+			// btnEnchant
+			// 
+			this.btnEnchant.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.btnEnchant.Image = ((System.Drawing.Image)(resources.GetObject("btnEnchant.Image")));
+			this.btnEnchant.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.btnEnchant.Name = "btnEnchant";
+			this.btnEnchant.Size = new System.Drawing.Size(23, 22);
+			this.btnEnchant.Text = "Enchant";
+			this.btnEnchant.Click += new System.EventHandler(this.BtnEnchantClick);
+			// 
+			// labelVersion
+			// 
+			this.labelVersion.Font = new System.Drawing.Font("Tahoma", 7.25F);
+			this.labelVersion.Name = "labelVersion";
+			this.labelVersion.Size = new System.Drawing.Size(65, 22);
+			this.labelVersion.Text = "{mc-version}";
+			// 
 			// tabControl
 			// 
 			this.tabControl.AllowDrop = true;
@@ -185,9 +213,9 @@ namespace INVedit
 			this.boxItems.Location = new System.Drawing.Point(518, 51);
 			this.boxItems.MultiSelect = false;
 			this.boxItems.Name = "boxItems";
-			this.boxItems.Size = new System.Drawing.Size(150, 301);
+			this.boxItems.Size = new System.Drawing.Size(162, 301);
 			this.boxItems.TabIndex = 3;
-			this.boxItems.TileSize = new System.Drawing.Size(128, 19);
+			this.boxItems.TileSize = new System.Drawing.Size(140, 19);
 			this.boxItems.UseCompatibleStateImageBehavior = false;
 			this.boxItems.View = System.Windows.Forms.View.Tile;
 			// 
@@ -212,7 +240,7 @@ namespace INVedit
 			this.boxSearch.ForeColor = System.Drawing.Color.Gray;
 			this.boxSearch.Location = new System.Drawing.Point(518, 29);
 			this.boxSearch.Name = "boxSearch";
-			this.boxSearch.Size = new System.Drawing.Size(150, 20);
+			this.boxSearch.Size = new System.Drawing.Size(162, 20);
 			this.boxSearch.TabIndex = 2;
 			this.boxSearch.Text = "Search...";
 			this.boxSearch.TextChanged += new System.EventHandler(this.BoxSearchTextChanged);
@@ -223,7 +251,7 @@ namespace INVedit
 			// 
 			this.AllowDrop = true;
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(672, 356);
+			this.ClientSize = new System.Drawing.Size(684, 356);
 			this.Controls.Add(this.boxSearch);
 			this.Controls.Add(this.toolStrip);
 			this.Controls.Add(this.tabControl);
@@ -239,13 +267,16 @@ namespace INVedit
 			this.ResumeLayout(false);
 			this.PerformLayout();
 		}
+		private System.Windows.Forms.ToolStripButton btnEnchant;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+		private System.Windows.Forms.ToolStripLabel labelVersion;
 		private System.Windows.Forms.ToolStripButton btnAbout;
 		private System.Windows.Forms.TextBox boxSearch;
 		private System.Windows.Forms.ToolStripProgressBar barUpdate;
 		private System.Windows.Forms.ToolStripButton btnUpdate;
 		private System.Windows.Forms.ToolStripButton btnReload;
 		private System.Windows.Forms.ToolStripButton btnCloseTab;
-		private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 		private System.Windows.Forms.OpenFileDialog openFileDialog;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog;
 		private System.Windows.Forms.TabControl tabControl;

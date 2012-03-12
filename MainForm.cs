@@ -8,7 +8,7 @@ using System.Net;
 using System.ComponentModel;
 using System.Diagnostics;
 
-using NBT;
+using Minecraft.NBT;
 
 namespace INVedit
 {
@@ -17,20 +17,26 @@ namespace INVedit
 		static string appdata;
 		static MainForm() {
 			if (Platform.Current == Platform.Windows)
-				appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)+"/.minecraft";
+				appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/.minecraft";
 			else if (Platform.Current == Platform.Mac)
-				appdata = Environment.GetEnvironmentVariable("HOME")+"/Library/Application Support/minecraft";
+				appdata = Environment.GetEnvironmentVariable("HOME") + "/Library/Application Support/minecraft";
 			else
-				appdata = Environment.GetEnvironmentVariable("HOME")+"/.minecraft";
+				appdata = Environment.GetEnvironmentVariable("HOME") + "/.minecraft";
 		}
 		
+		EnchantForm enchantForm = null;
 		List<CheckBox> groups = new List<CheckBox>();
 		
-		string url = "http://copy.mcft.net/mc/INVedit";
-		WebClient client = new WebClient();
+		string[][] servers = new string[][]{
+			new string[]{ "http://copy.mcft.net/mc/INVedit/", "version" },
+			new string[]{ "http://mirror.mcmyadmin.com/copyboy/INVedit/", "version.txt" }
+		};
+		WebClient[] clients;
 		List<string> download;
 		List<byte[]> files;
 		int current;
+		int currentServer;
+		int serversChecked;
 		
 		public MainForm(string[] files)
 		{
@@ -38,9 +44,9 @@ namespace INVedit
 			
 			Data.Init("items.txt");
 			
-			client.DownloadStringCompleted += VersionCompleted;
-			client.DownloadDataCompleted += FileCompleted;
-			client.DownloadProgressChanged += FileProgress;
+			labelVersion.Text = Data.mcVersion;
+			int left = Math.Min(340 - labelVersion.Width / 2, 382 - labelVersion.Width);
+			labelVersion.Margin = new Padding(left, 1, 0, 2);
 			
 			boxItems.LargeImageList = Data.list;
 			boxItems.ItemDrag += ItemDrag;
@@ -48,7 +54,7 @@ namespace INVedit
 			foreach (Data.Group group in Data.groups.Values) {
 				CheckBox box = new CheckBox();
 				box.Size = new Size(26, 26);
-				box.Location = new Point(Width-189 + (groups.Count / 12) * 27, 29 + (groups.Count % 12) * 27);
+				box.Location = new Point(Width-201 + (groups.Count / 12) * 27, 29 + (groups.Count % 12) * 27);
 				box.ImageList = Data.list;
 				box.ImageIndex = group.imageIndex;
 				box.Appearance = Appearance.Button;
@@ -69,6 +75,8 @@ namespace INVedit
 		void Open(string file)
 		{
 			Page page = new Page();
+			page.Changed += Change;
+			Change(null);
 			Open(page,file);
 			tabControl.TabPages.Add(page);
 			tabControl.SelectedTab = page;
@@ -86,10 +94,10 @@ namespace INVedit
 				btnSave.Enabled = true;
 				btnCloseTab.Enabled = true;
 				btnReload.Enabled = true;
-				Tag tag = NBT.Tag.Load(file);
-				if (tag.Type==TagType.Compound && tag.Contains("Data")) { tag = tag["Data"]; }
-				if (tag.Type==TagType.Compound && tag.Contains("Player")) { tag = tag["Player"]; }
-				if (tag.Type==TagType.Compound && tag.Contains("Inventory")) { tag = tag["Inventory"]; }
+				NbtTag tag = NbtTag.Load(file);
+				if (tag.Type==NbtTagType.Compound && tag.Contains("Data")) { tag = tag["Data"]; }
+				if (tag.Type==NbtTagType.Compound && tag.Contains("Player")) { tag = tag["Player"]; }
+				if (tag.Type==NbtTagType.Compound && tag.Contains("Inventory")) { tag = tag["Inventory"]; }
 				if (tag.Name != "Inventory") { throw new Exception("Can't find Inventory tag."); }
 				Inventory.Load(tag, page.slots);
 			} catch (Exception ex) { MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
@@ -108,9 +116,9 @@ namespace INVedit
 					if (result != DialogResult.Yes) return;
 				}
 				page.file = info.FullName;
-				Tag root,tag;
+				NbtTag root,tag;
 				if (info.Exists) {
-					root = NBT.Tag.Load(page.file);
+					root = NbtTag.Load(page.file);
 					tag = root;
 				} else {
 					if (info.Extension.ToLower() == ".dat") {
@@ -118,11 +126,11 @@ namespace INVedit
 						                "Select an existing one instead.", "Error",
 						                MessageBoxButtons.OK, MessageBoxIcon.Error);
 						return;
-					} root = NBT.Tag.Create("Inventory");
+					} root = NbtTag.Create("Inventory");
 					tag = root;
-				} if (tag.Type==TagType.Compound && tag.Contains("Data")) { tag = tag["Data"]; }
-				if (tag.Type==TagType.Compound && tag.Contains("Player")) { tag = tag["Player"]; }
-				if (root.Name!="Inventory" && (tag.Type!=TagType.Compound || !tag.Contains("Inventory"))) { throw new Exception("Can't find Inventory tag."); }
+				} if (tag.Type==NbtTagType.Compound && tag.Contains("Data")) { tag = tag["Data"]; }
+				if (tag.Type==NbtTagType.Compound && tag.Contains("Player")) { tag = tag["Player"]; }
+				if (root.Name!="Inventory" && (tag.Type!=NbtTagType.Compound || !tag.Contains("Inventory"))) { throw new Exception("Can't find Inventory tag."); }
 				Inventory.Save(tag, page.slots);
 				root.Save(page.file);
 				if (info.Name == "level.dat") { page.Text = info.Directory.Name; }
@@ -224,13 +232,15 @@ namespace INVedit
 		{
 			if (e.Button != MouseButtons.Left) return;
 			Item item = (Item)((ListViewItem)e.Item).Tag;
-			item = new Item(item.ID, item.Stack, 0, item.Damage);
+			item = new Item(item.ID, item.Preferred, 0, item.Damage);
 			DoDragDrop(item, DragDropEffects.Copy | DragDropEffects.Move);
 		}
 		
 		void BtnNewClick(object sender, EventArgs e)
 		{
 			Page page = new Page();
+			page.Changed += Change;
+			Change(null);
 			page.Text = "unnamed.inv";
 			Text = "INVedit - unnamed.inv";
 			tabControl.TabPages.Add(page);
@@ -266,6 +276,7 @@ namespace INVedit
 			try {
 				Page page = (Page)tabControl.SelectedTab;
 				Open(page, page.file);
+				page.ItemChanged(false);
 			} catch (Exception ex) { MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
 		}
 		
@@ -284,6 +295,25 @@ namespace INVedit
 				btnSave.Enabled = false;
 				btnCloseTab.Enabled = false;
 			}
+		}
+		
+		void BtnEnchantClick(object sender, EventArgs e)
+		{
+			btnEnchant.Enabled = false;
+			enchantForm = new EnchantForm();
+			enchantForm.Closed += delegate {
+				btnEnchant.Enabled = true;
+				enchantForm = null;
+			};
+			if (tabControl.SelectedTab != null)
+				enchantForm.Update(((Page)tabControl.SelectedTab).selected);
+			enchantForm.Show(this);
+		}
+		
+		void Change(ItemSlot slot)
+		{
+			if (enchantForm == null) return;
+			enchantForm.Update(slot);
 		}
 		
 		void BtnAboutClick(object sender, EventArgs e)
@@ -313,9 +343,10 @@ namespace INVedit
 				hover = tabControl.TabPages[i];
 				break;
 			}
-			if (hover == null) return;
+			if (hover == null || hover == tabControl.SelectedTab) return;
 			if (!e.Data.GetDataPresent(typeof(Item))) return;
 			tabControl.SelectedTab = hover;
+			Change(((Page)tabControl.SelectedTab).selected);
 		}
 		
 		void TabControlSelected(object sender, TabControlEventArgs e)
@@ -323,9 +354,11 @@ namespace INVedit
 			if (e.TabPage != null) {
 				Text = "INVedit - "+e.TabPage.Text;
 				btnReload.Enabled = (((Page)e.TabPage).file != null);
+				Change(((Page)tabControl.SelectedTab).selected);
 			} else {
 				Text = "INVedit - Minecraft Inventory Editor";
 				btnReload.Enabled = false;
+				Change(null);
 			}
 			
 		}
@@ -375,7 +408,16 @@ namespace INVedit
 				case "Check for updates":
 					btnUpdate.Text = "Checking ...";
 					btnUpdate.Enabled = false;
-					client.DownloadStringAsync(new Uri(url+"/version"));
+					currentServer = -1;
+					serversChecked = 0;
+					clients = new WebClient[servers.Length];
+					for (int i = 0; i < servers.Length; i++) {
+						clients[i] = new WebClient();
+						clients[i].DownloadStringCompleted += VersionCompleted;
+						clients[i].DownloadDataCompleted += FileCompleted;
+						clients[i].DownloadProgressChanged += FileProgress;
+						clients[i].DownloadStringAsync(new Uri(servers[i][0] + servers[i][1]), i);
+					}
 					break;
 				case "Download":
 					btnUpdate.Text = "";
@@ -385,49 +427,53 @@ namespace INVedit
 					barUpdate.Maximum = download.Count*100;
 					int current = 0;
 					files = new List<byte[]>();
-					Uri uri = new Uri(url+"/"+download[current]);
-					client.DownloadDataAsync(uri);
+					Uri uri = new Uri(servers[currentServer][0] + download[current]);
+					clients[currentServer].DownloadDataAsync(uri);
 					break;
 				case "Restart":
-					for (int i=0;i<download.Count;++i) {
+					for (int i = 0; i < download.Count; i++) {
 						string name = download[i];
 						byte[] data = files[i];
 						if (name == "INVedit.exe" ||
-						    name == "NBT.dll") { name = "_"+name; }
-						File.WriteAllBytes(name,data);
-					} if (File.Exists("_INVedit.exe")) {
-						Process.Start("_INVedit.exe","-update");
-					} else { Process.Start("INVedit.exe","-update"); }
+						    name == "NBT.dll") name = "_" + name;
+						File.WriteAllBytes(name, data);
+					}
+					if (File.Exists("_INVedit.exe"))
+						Process.Start("_INVedit.exe", "-update");
+					else Process.Start("INVedit.exe", "-update");
 					Application.Exit();
 					break;
 			}
 		}
 		void VersionCompleted(object sender, DownloadStringCompletedEventArgs e)
 		{
-			if (e.Error!=null) {
-				btnUpdate.Text = "Error while checking for updates";
+			if (e.Error != null) {
+				serversChecked++;
+				if (serversChecked == servers.Length)
+					btnUpdate.Text = "Error while checking for updates";
 				return;
-			} int version = 1;
+			}
+			if (currentServer != -1) return;
+			currentServer = (int)e.UserState;
+			int version = 1;
 			string[] lines = e.Result.Split(new string[]{ "\r\n" }, StringSplitOptions.None);
 			download = new List<string>();
 			foreach (string line in lines) {
-				if (line == "") ++version;
+				if (line == "") version++;
 				else if (version > Data.version &&
 				         !download.Contains(line)) download.Add(line);
 			} if (download.Count > 0) {
 				btnUpdate.Text = "Download";
 				btnUpdate.Enabled = true;
-			} else {
-				btnUpdate.Text = "No update available";
-			}
+			} else btnUpdate.Text = "No update available";
 		}
 		void FileProgress(object sender, DownloadProgressChangedEventArgs e)
 		{
-			barUpdate.Value = current*100 + e.ProgressPercentage;
+			barUpdate.Value = current * 100 + e.ProgressPercentage;
 		}
 		void FileCompleted(object sender, DownloadDataCompletedEventArgs e)
 		{
-			if (e.Error!=null) {
+			if (e.Error != null) {
 				btnUpdate.Text = "Download";
 				btnUpdate.Enabled = true;
 				barUpdate.Visible = false;
@@ -439,8 +485,8 @@ namespace INVedit
 				btnUpdate.Enabled = true;
 				barUpdate.Visible = false;
 			} else {
-				Uri uri = new Uri(url+"/"+download[current]);
-				client.DownloadDataAsync(uri);
+				Uri uri = new Uri(servers[currentServer][0] + download[current]);
+				clients[currentServer].DownloadDataAsync(uri);
 			}
 		}
 	}

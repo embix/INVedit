@@ -21,7 +21,7 @@ namespace INVedit
 		public Item Item { get; set; }
 		public Image Default { get; set; }
 		
-		public event Action Changed = delegate {  };
+		public event Action<bool> Changed = delegate {  };
 		
 		public ItemSlot(byte slot)
 		{
@@ -34,6 +34,8 @@ namespace INVedit
 			TabStop = false;
 		}
 		
+		internal void CallChanged() { Changed(true); }
+		
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
 			if (e.Button != MouseButtons.Left) return;
@@ -44,9 +46,9 @@ namespace INVedit
 			other = Item;
 			DragDropEffects final = DoDragDrop(Item, DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
 			DragEnd();
-			if (final == DragDropEffects.Move) { Item = other; }
+			var old = Item;
+			if (final == DragDropEffects.Move) { Item = other; Changed(false); }
 			Checked = false;
-			Changed();
 		}
 		
 		void OnLostFocus(object sender, EventArgs e)
@@ -60,7 +62,7 @@ namespace INVedit
 			if ((e.KeyCode & Keys.Delete) != Keys.Delete) return;
 			if (Item == null) return;
 			Item = null;
-			Changed();
+			Changed(false);
 			Refresh();
 		}
 		
@@ -94,7 +96,9 @@ namespace INVedit
 			Item item = (Item)e.Data.GetData(typeof(Item));
 			if (e.Effect == DragDropEffects.Link) {
 				if (Item == null) {
-					Item = new Item(item.ID, (byte)(item.Count/2), Slot, item.Damage);
+					Item = new Item(item.tag);
+					Item.Slot = Slot;
+					Item.Count -= (byte)(item.Count / 2);
 					item.Count -= Item.Count;
 				} else {
 					byte count = Item.Count;
@@ -104,16 +108,21 @@ namespace INVedit
 			} else if (e.Effect == DragDropEffects.Move && Item != null && item.ID == Item.ID && Item.Damage == item.Damage) {
 				byte count = (byte)Math.Min((int)Item.Count + item.Count, item.Stack);
 				byte over = (byte)Math.Max((int)Item.Count + item.Count - item.Stack, 0);
-				Item = new Item(Item.ID, count, Slot, Item.Damage);
-				other = (over>0) ? new Item(Item.ID, over) : null;
+				Item = new Item(Item.tag);
+				Item.Slot = Slot;
+				Item.Count = count;
+				if (over > 0) other.Count = over;
+				else other = null;
 			} else {
 				other = Item; Item = item;
-				if (e.Effect == DragDropEffects.Copy)
-					Item = new Item(Item.ID, Item.Count, Slot, Item.Damage);
-				else Item.Slot = Slot;
+				if (e.Effect == DragDropEffects.Copy) {
+					Item = new Item(Item.tag);
+					Item.Slot = Slot;
+				} else Item.Slot = Slot;
 			}
 			LostFocus += OnLostFocus;
-			Changed();
+			try { Changed(false); }
+			catch (Exception ex) { MessageBox.Show(ex.ToString()); }
 			Focus();
 		}
 		
@@ -140,7 +149,7 @@ namespace INVedit
 				Item.Count = (byte)Math.Min(Math.Max((int)Item.Count + count, 1), Item.Stack);
 				if (before == Item.Count) return;
 			}
-			Changed();
+			Changed(false);
 			Refresh();
 		}
 		
@@ -157,6 +166,9 @@ namespace INVedit
 			
 			g.InterpolationMode = InterpolationMode.NearestNeighbor;
 			g.PixelOffsetMode = PixelOffsetMode.Half;
+			
+			if (Item != null && Item.Enchanted)
+				g.FillRectangle(new SolidBrush(Color.FromArgb(80, Color.SlateBlue)), 5, 5, Width-10, Height-10);
 			
 			g.DrawImage(image, ClientSize.Width/2-16, ClientSize.Height/2-16, 32, 32);
 			

@@ -15,12 +15,14 @@ namespace INVedit
 		GroupBox boxInventory;
 		NumericUpDown boxDamage;
 		NumericUpDown boxCount;
-		ItemSlot selected = null;
 		
+		public ItemSlot selected = null;
 		public string file = null;
 		public bool world = false;
 		public bool changed = false;
 		public Dictionary<byte, ItemSlot> slots = new Dictionary<byte, ItemSlot>();
+		
+		public event Action<ItemSlot> Changed;
 		
 		public Page()
 		{
@@ -95,7 +97,7 @@ namespace INVedit
 				Location = new Point(x, y), Default = def, UseVisualStyleBackColor = true
 			};
 			itemSlot.GotFocus += SelectionChanged;
-			itemSlot.Changed += ItemChanged;
+			itemSlot.Changed += (enchantment) => ItemChanged(true, enchantment);
 			boxInventory.Controls.Add(itemSlot);
 			slots.Add(slot, itemSlot);
 		}
@@ -142,12 +144,16 @@ namespace INVedit
 			
 			boxDamage.ValueChanged += ValueChanged;
 			boxCount.ValueChanged += ValueChanged;
+			
+			if (Changed != null) Changed(selected);
 		}
 		
-		void ItemChanged()
+		public void ItemChanged(bool change = true, bool enchantment = false)
 		{
-			if (((TabControl)Parent).SelectedTab == this &&
-			    selected != null) {
+			if (selected != null) {
+				if (enchantment)
+					selected.Refresh();
+				
 				boxDamage.ValueChanged -= ValueChanged;
 				boxCount.ValueChanged -= ValueChanged;
 				
@@ -160,12 +166,16 @@ namespace INVedit
 				
 				boxDamage.ValueChanged += ValueChanged;
 				boxCount.ValueChanged += ValueChanged;
+				
+				if (((TabControl)Parent).SelectedTab == this &&
+				    Changed != null && !enchantment) Changed(selected);
 			}
 			
-			if (!changed) {
+			if (!changed && change) {
 				changed = true;
 				Text += "*";
-				Parent.Parent.Text += "*";
+				if (((TabControl)Parent).SelectedTab == this)
+					Parent.Parent.Text += "*";
 			}
 		}
 	}

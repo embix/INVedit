@@ -24,11 +24,11 @@ namespace INVedit
 				if (arg.Length > 0 && arg[0] == '-') {
 				switch (args[0]) {
 					case "-update":
-						if (File.Exists("_NBT.dll")) {
+						if (File.Exists("NBT.dll")) {
 							while (true) {
 								try { File.Delete("NBT.dll"); break; } catch {  }
 								Thread.Sleep(500);
-							} File.Copy("_NBT.dll", "NBT.dll");
+							}
 						}
 						if (File.Exists("_INVedit.exe")) {
 							while (true) {
@@ -46,8 +46,12 @@ namespace INVedit
 				}
 			} else { files.Add(arg); }
 			
-			try { Assembly.Load("NBT"); }
-			catch { MessageBox.Show("Couldn't load NBT.dll.", "Error"); return; }
+			if (!File.Exists("items.txt")) {
+				MessageBox.Show("Couldn't find file 'items.txt'.\n" +
+				                "Did you unpack INVedit correctly?", "Error",
+				                MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
 			
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
