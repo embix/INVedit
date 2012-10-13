@@ -25,6 +25,7 @@ namespace INVedit
 		}
 		
 		EnchantForm enchantForm = null;
+		EditForm editForm = null;
 		List<CheckBox> groups = new List<CheckBox>();
 		
 		string[][] servers = new string[][]{
@@ -45,8 +46,6 @@ namespace INVedit
 			Data.Init("items.txt");
 			
 			labelVersion.Text = Data.mcVersion;
-			int left = Math.Min(340 - labelVersion.Width / 2, 382 - labelVersion.Width);
-			labelVersion.Margin = new Padding(left, 1, 0, 2);
 			
 			boxItems.LargeImageList = Data.list;
 			boxItems.ItemDrag += ItemDrag;
@@ -54,7 +53,7 @@ namespace INVedit
 			foreach (Data.Group group in Data.groups.Values) {
 				CheckBox box = new CheckBox();
 				box.Size = new Size(26, 26);
-				box.Location = new Point(Width-201 + (groups.Count / 12) * 27, 29 + (groups.Count % 12) * 27);
+				box.Location = new Point(Width-205 + (groups.Count / 12) * 27, 29 + (groups.Count % 12) * 27);
 				box.ImageList = Data.list;
 				box.ImageIndex = group.imageIndex;
 				box.Appearance = Appearance.Button;
@@ -126,11 +125,11 @@ namespace INVedit
 						                "Select an existing one instead.", "Error",
 						                MessageBoxButtons.OK, MessageBoxIcon.Error);
 						return;
-					} root = NbtTag.Create("Inventory");
+					} root = NbtTag.CreateCompound("Inventory", NbtTag.CreateList(NbtTagType.Compound));
 					tag = root;
 				} if (tag.Type==NbtTagType.Compound && tag.Contains("Data")) { tag = tag["Data"]; }
 				if (tag.Type==NbtTagType.Compound && tag.Contains("Player")) { tag = tag["Player"]; }
-				if (root.Name!="Inventory" && (tag.Type!=NbtTagType.Compound || !tag.Contains("Inventory"))) { throw new Exception("Can't find Inventory tag."); }
+				if (tag.Type!=NbtTagType.Compound || !tag.Contains("Inventory")) { throw new Exception("Can't find Inventory tag."); }
 				Inventory.Save(tag, page.slots);
 				root.Save(page.file);
 				if (info.Name == "level.dat") { page.Text = info.Directory.Name; }
@@ -310,10 +309,25 @@ namespace INVedit
 			enchantForm.Show(this);
 		}
 		
+		void BtnEditClick(object sender, EventArgs e)
+		{
+			btnEdit.Enabled = false;
+			editForm = new EditForm();
+			editForm.Closed += delegate {
+				btnEdit.Enabled = true;
+				editForm = null;
+			};
+			if (tabControl.SelectedTab != null)
+				editForm.Update(((Page)tabControl.SelectedTab).selected);
+			editForm.Show(this);
+		}
+		
 		void Change(ItemSlot slot)
 		{
-			if (enchantForm == null) return;
-			enchantForm.Update(slot);
+			if (enchantForm != null)
+				enchantForm.Update(slot);
+			if (editForm != null)
+				editForm.Update(slot);
 		}
 		
 		void BtnAboutClick(object sender, EventArgs e)

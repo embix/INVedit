@@ -87,11 +87,7 @@ namespace INVedit
 			boxCount.ValueChanged += ValueChanged;
 		}
 		
-		void CreateSlot(byte slot, int x, int y)
-		{
-			CreateSlot(slot, x, y, null);
-		}
-		void CreateSlot(byte slot, int x, int y, Image def)
+		void CreateSlot(byte slot, int x, int y, Image def = null)
 		{
 			ItemSlot itemSlot = new ItemSlot(slot){
 				Location = new Point(x, y), Default = def, UseVisualStyleBackColor = true
@@ -148,7 +144,7 @@ namespace INVedit
 			if (Changed != null) Changed(selected);
 		}
 		
-		public void ItemChanged(bool change = true, bool enchantment = false)
+		public void ItemChanged(bool change, bool enchantment = false)
 		{
 			if (selected != null) {
 				if (enchantment)

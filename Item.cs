@@ -59,13 +59,7 @@ namespace INVedit
 			} }
 		
 		public Item(NbtTag tag) { this.tag = tag.Clone(); }
-		public Item(short id)
-			: this(id, 1, 0, 0) {  }
-		public Item(short id, byte count)
-			: this(id, count, 0, 0) {  }
-		public Item(short id, byte count, byte slot)
-			: this(id, count, slot, 0) {  }
-		public Item(short id, byte count, byte slot, short damage)
+		public Item(short id, byte count = 1, byte slot = 0, short damage = 0)
 		{
 			tag = NbtTag.CreateCompound(
 				"id", id,

@@ -49,6 +49,7 @@ namespace INVedit
 			this.barUpdate = new System.Windows.Forms.ToolStripProgressBar();
 			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.btnEnchant = new System.Windows.Forms.ToolStripButton();
+			this.btnEdit = new System.Windows.Forms.ToolStripButton();
 			this.labelVersion = new System.Windows.Forms.ToolStripLabel();
 			this.tabControl = new System.Windows.Forms.TabControl();
 			this.boxItems = new System.Windows.Forms.ListView();
@@ -72,10 +73,11 @@ namespace INVedit
 									this.barUpdate,
 									this.toolStripSeparator2,
 									this.btnEnchant,
+									this.btnEdit,
 									this.labelVersion});
 			this.toolStrip.Location = new System.Drawing.Point(0, 0);
 			this.toolStrip.Name = "toolStrip";
-			this.toolStrip.Size = new System.Drawing.Size(684, 25);
+			this.toolStrip.Size = new System.Drawing.Size(688, 26);
 			this.toolStrip.TabIndex = 0;
 			// 
 			// btnNew
@@ -84,7 +86,7 @@ namespace INVedit
 			this.btnNew.Image = ((System.Drawing.Image)(resources.GetObject("btnNew.Image")));
 			this.btnNew.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnNew.Name = "btnNew";
-			this.btnNew.Size = new System.Drawing.Size(23, 22);
+			this.btnNew.Size = new System.Drawing.Size(23, 23);
 			this.btnNew.Text = "New";
 			this.btnNew.Click += new System.EventHandler(this.BtnNewClick);
 			// 
@@ -94,7 +96,7 @@ namespace INVedit
 			this.btnOpen.Image = ((System.Drawing.Image)(resources.GetObject("btnOpen.Image")));
 			this.btnOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnOpen.Name = "btnOpen";
-			this.btnOpen.Size = new System.Drawing.Size(32, 22);
+			this.btnOpen.Size = new System.Drawing.Size(32, 23);
 			this.btnOpen.Text = "Open";
 			this.btnOpen.ButtonClick += new System.EventHandler(this.BtnOpenClick);
 			this.btnOpen.DropDownOpening += new System.EventHandler(this.BtnOpenDropDownOpening);
@@ -107,7 +109,7 @@ namespace INVedit
 			this.btnSave.Image = ((System.Drawing.Image)(resources.GetObject("btnSave.Image")));
 			this.btnSave.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnSave.Name = "btnSave";
-			this.btnSave.Size = new System.Drawing.Size(32, 22);
+			this.btnSave.Size = new System.Drawing.Size(32, 23);
 			this.btnSave.Text = "Save";
 			this.btnSave.ButtonClick += new System.EventHandler(this.BtnSaveClick);
 			this.btnSave.DropDownOpening += new System.EventHandler(this.BtnSaveDropDownOpening);
@@ -120,14 +122,14 @@ namespace INVedit
 			this.btnAbout.Image = ((System.Drawing.Image)(resources.GetObject("btnAbout.Image")));
 			this.btnAbout.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnAbout.Name = "btnAbout";
-			this.btnAbout.Size = new System.Drawing.Size(23, 22);
+			this.btnAbout.Size = new System.Drawing.Size(23, 23);
 			this.btnAbout.Text = "About";
 			this.btnAbout.Click += new System.EventHandler(this.BtnAboutClick);
 			// 
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+			this.toolStripSeparator1.Size = new System.Drawing.Size(6, 26);
 			// 
 			// btnReload
 			// 
@@ -136,7 +138,7 @@ namespace INVedit
 			this.btnReload.Image = ((System.Drawing.Image)(resources.GetObject("btnReload.Image")));
 			this.btnReload.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnReload.Name = "btnReload";
-			this.btnReload.Size = new System.Drawing.Size(23, 22);
+			this.btnReload.Size = new System.Drawing.Size(23, 23);
 			this.btnReload.Text = "Reload";
 			this.btnReload.Click += new System.EventHandler(this.BtnReloadClick);
 			// 
@@ -147,7 +149,7 @@ namespace INVedit
 			this.btnCloseTab.Image = ((System.Drawing.Image)(resources.GetObject("btnCloseTab.Image")));
 			this.btnCloseTab.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnCloseTab.Name = "btnCloseTab";
-			this.btnCloseTab.Size = new System.Drawing.Size(23, 22);
+			this.btnCloseTab.Size = new System.Drawing.Size(23, 23);
 			this.btnCloseTab.Text = "Close tab";
 			this.btnCloseTab.Click += new System.EventHandler(this.BtnCloseTabClick);
 			// 
@@ -157,7 +159,7 @@ namespace INVedit
 			this.btnUpdate.Image = ((System.Drawing.Image)(resources.GetObject("btnUpdate.Image")));
 			this.btnUpdate.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnUpdate.Name = "btnUpdate";
-			this.btnUpdate.Size = new System.Drawing.Size(115, 22);
+			this.btnUpdate.Size = new System.Drawing.Size(140, 23);
 			this.btnUpdate.Text = "Check for updates";
 			this.btnUpdate.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
 			this.btnUpdate.Click += new System.EventHandler(this.BtnUpdateClick);
@@ -174,7 +176,7 @@ namespace INVedit
 			// toolStripSeparator2
 			// 
 			this.toolStripSeparator2.Name = "toolStripSeparator2";
-			this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+			this.toolStripSeparator2.Size = new System.Drawing.Size(6, 26);
 			// 
 			// btnEnchant
 			// 
@@ -182,15 +184,25 @@ namespace INVedit
 			this.btnEnchant.Image = ((System.Drawing.Image)(resources.GetObject("btnEnchant.Image")));
 			this.btnEnchant.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnEnchant.Name = "btnEnchant";
-			this.btnEnchant.Size = new System.Drawing.Size(23, 22);
+			this.btnEnchant.Size = new System.Drawing.Size(23, 23);
 			this.btnEnchant.Text = "Enchant";
 			this.btnEnchant.Click += new System.EventHandler(this.BtnEnchantClick);
+			// 
+			// btnEdit
+			// 
+			this.btnEdit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.btnEdit.Image = ((System.Drawing.Image)(resources.GetObject("btnEdit.Image")));
+			this.btnEdit.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.btnEdit.Name = "btnEdit";
+			this.btnEdit.Size = new System.Drawing.Size(23, 23);
+			this.btnEdit.Text = "Book Editor";
+			this.btnEdit.Click += new System.EventHandler(this.BtnEditClick);
 			// 
 			// labelVersion
 			// 
 			this.labelVersion.Font = new System.Drawing.Font("Tahoma", 7.25F);
 			this.labelVersion.Name = "labelVersion";
-			this.labelVersion.Size = new System.Drawing.Size(65, 22);
+			this.labelVersion.Size = new System.Drawing.Size(77, 23);
 			this.labelVersion.Text = "{mc-version}";
 			// 
 			// tabControl
@@ -213,7 +225,7 @@ namespace INVedit
 			this.boxItems.Location = new System.Drawing.Point(518, 51);
 			this.boxItems.MultiSelect = false;
 			this.boxItems.Name = "boxItems";
-			this.boxItems.Size = new System.Drawing.Size(162, 301);
+			this.boxItems.Size = new System.Drawing.Size(166, 301);
 			this.boxItems.TabIndex = 3;
 			this.boxItems.TileSize = new System.Drawing.Size(140, 19);
 			this.boxItems.UseCompatibleStateImageBehavior = false;
@@ -240,7 +252,7 @@ namespace INVedit
 			this.boxSearch.ForeColor = System.Drawing.Color.Gray;
 			this.boxSearch.Location = new System.Drawing.Point(518, 29);
 			this.boxSearch.Name = "boxSearch";
-			this.boxSearch.Size = new System.Drawing.Size(162, 20);
+			this.boxSearch.Size = new System.Drawing.Size(166, 22);
 			this.boxSearch.TabIndex = 2;
 			this.boxSearch.Text = "Search...";
 			this.boxSearch.TextChanged += new System.EventHandler(this.BoxSearchTextChanged);
@@ -251,7 +263,7 @@ namespace INVedit
 			// 
 			this.AllowDrop = true;
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.ClientSize = new System.Drawing.Size(684, 356);
+			this.ClientSize = new System.Drawing.Size(688, 356);
 			this.Controls.Add(this.boxSearch);
 			this.Controls.Add(this.toolStrip);
 			this.Controls.Add(this.tabControl);
@@ -267,6 +279,7 @@ namespace INVedit
 			this.ResumeLayout(false);
 			this.PerformLayout();
 		}
+		private System.Windows.Forms.ToolStripButton btnEdit;
 		private System.Windows.Forms.ToolStripButton btnEnchant;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
 		private System.Windows.Forms.ToolStripLabel labelVersion;
