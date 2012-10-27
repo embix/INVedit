@@ -94,6 +94,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="Utility\BigEndianReader.cs" />
+    <Compile Include="Utility\BigEndianUtility.cs" />
     <Compile Include="Utility\BigEndianWriter.cs" />
     <EmbeddedResource Include="AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>

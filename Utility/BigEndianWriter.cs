@@ -8,35 +8,29 @@ namespace Minecraft.Utility
 		public BigEndianWriter(Stream output)
 			: base(output) {  }
 		
+		private void WriteEnsured(byte[] value)
+		{
+			Write(BigEndianUtility.EnsureEndian(value));
+		}
 		public override void Write(short value)
 		{
-			byte[] array = BitConverter.GetBytes(value);
-			if (BitConverter.IsLittleEndian) Array.Reverse(array);
-			Write(array);
+			WriteEnsured(BitConverter.GetBytes(value));
 		}
 		public override void Write(int value)
 		{
-			byte[] array = BitConverter.GetBytes(value);
-			if (BitConverter.IsLittleEndian) Array.Reverse(array);
-			Write(array);
+			WriteEnsured(BitConverter.GetBytes(value));
 		}
 		public override void Write(long value)
 		{
-			byte[] array = BitConverter.GetBytes(value);
-			if (BitConverter.IsLittleEndian) Array.Reverse(array);
-			Write(array);
+			WriteEnsured(BitConverter.GetBytes(value));
 		}
 		public override void Write(float value)
 		{
-			byte[] array = BitConverter.GetBytes(value);
-			if (BitConverter.IsLittleEndian) Array.Reverse(array);
-			Write(array);
+			WriteEnsured(BitConverter.GetBytes(value));
 		}
 		public override void Write(double value)
 		{
-			byte[] array = BitConverter.GetBytes(value);
-			if (BitConverter.IsLittleEndian) Array.Reverse(array);
-			Write(array);
+			WriteEnsured(BitConverter.GetBytes(value));
 		}
 	}
 }

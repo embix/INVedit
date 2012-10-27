@@ -8,35 +8,29 @@ namespace Minecraft.Utility
 		public BigEndianReader(Stream input)
 			: base(input) {  }
 		
+		private byte[] ReadEnsured(int length)
+		{
+			return BigEndianUtility.EnsureEndian(ReadBytes(length));
+		}
 		public override short ReadInt16()
 		{
-			byte[] array = ReadBytes(2);
-			if (BitConverter.IsLittleEndian) Array.Reverse(array);
-			return BitConverter.ToInt16(array, 0);
+			return BitConverter.ToInt16(ReadEnsured(2), 0);
 		}
 		public override int ReadInt32()
 		{
-			byte[] array = ReadBytes(4);
-			if (BitConverter.IsLittleEndian) Array.Reverse(array);
-			return BitConverter.ToInt32(array, 0);
+			return BitConverter.ToInt32(ReadEnsured(4), 0);
 		}
 		public override long ReadInt64()
 		{
-			byte[] array = ReadBytes(8);
-			if (BitConverter.IsLittleEndian) Array.Reverse(array);
-			return BitConverter.ToInt64(array, 0);
+			return BitConverter.ToInt64(ReadEnsured(8), 0);
 		}
 		public override float ReadSingle()
 		{
-			byte[] array = ReadBytes(4);
-			if (BitConverter.IsLittleEndian) Array.Reverse(array);
-			return BitConverter.ToSingle(array, 0);
+			return BitConverter.ToSingle(ReadEnsured(4), 0);
 		}
 		public override double ReadDouble()
 		{
-			byte[] array = ReadBytes(8);
-			if (BitConverter.IsLittleEndian) Array.Reverse(array);
-			return BitConverter.ToDouble(array, 0);
+			return BitConverter.ToDouble(ReadEnsured(8), 0);
 		}
 	}
 }

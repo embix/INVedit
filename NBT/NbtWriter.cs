@@ -85,33 +85,23 @@ namespace Minecraft.NBT
 		}
 		void Write(short value)
 		{
-			byte[] array = BitConverter.GetBytes(value);
-			if (BitConverter.IsLittleEndian) Array.Reverse(array);
-			_writer.Write(array);
+			_writer.Write(value);
 		}
 		void Write(int value)
 		{
-			byte[] array = BitConverter.GetBytes(value);
-			if (BitConverter.IsLittleEndian) Array.Reverse(array);
-			_writer.Write(array);
+			_writer.Write(value);
 		}
 		void Write(long value)
 		{
-			byte[] array = BitConverter.GetBytes(value);
-			if (BitConverter.IsLittleEndian) Array.Reverse(array);
-			_writer.Write(array);
+			_writer.Write(value);
 		}
 		void Write(float value)
 		{
-			byte[] array = BitConverter.GetBytes(value);
-			if (BitConverter.IsLittleEndian) Array.Reverse(array);
-			_writer.Write(array);
+			_writer.Write(value);
 		}
 		void Write(double value)
 		{
-			byte[] array = BitConverter.GetBytes(value);
-			if (BitConverter.IsLittleEndian) Array.Reverse(array);
-			_writer.Write(array);
+			_writer.Write(value);
 		}
 		void Write(byte[] value)
 		{
