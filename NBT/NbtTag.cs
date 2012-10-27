@@ -285,6 +285,10 @@ namespace Minecraft.NBT
 		{
 			return (string)tag.Value;
 		}
+		public static explicit operator int[](NbtTag tag)
+		{
+			return (int[])tag.Value;
+		}
 		#endregion
 	}
 }

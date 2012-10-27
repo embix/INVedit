@@ -50,15 +50,16 @@ namespace Minecraft.NBT
 				case NbtTagType.Double: str += "TAG_Double"; break;
 				case NbtTagType.ByteArray: str += "TAG_Byte_Array"; break;
 				case NbtTagType.String: str += "TAG_String"; break;
+				case NbtTagType.IntArray: str += "TAG_Int_Array"; break;
 			}
 			if (Name != null)
 				str += "(\""+Name+"\")";
 			if (Type == NbtTagType.ByteArray) {
 				int length = ((byte[])Value).Length;
-				str += ": ["+length;
-				if (length == 1)
-					str += " byte]";
-				else str += " bytes]";
+				str += ": ["+length + ((length == 1) ? " byte]" : " bytes]");
+			} else if (Type == NbtTagType.IntArray) {
+				int length = ((int[])Value).Length;
+				str += ": ["+length + ((length == 1) ? " int]" : " ints]");
 			} else str += ": "+Value;
 			return str;
 		}
@@ -74,6 +75,7 @@ namespace Minecraft.NBT
 			if (value is double) return NbtTagType.Double;
 			if (value is byte[]) return NbtTagType.ByteArray;
 			if (value is string) return NbtTagType.String;
+			if (value is int[])  return NbtTagType.IntArray;
 			return NbtTagType.End;
 		}
 	}

@@ -4,7 +4,7 @@ namespace Minecraft.NBT
 {
 	public enum NbtTagType : byte
 	{
-		End,
+		End = 0,
 		Byte,
 		Short,
 		Int,
@@ -14,6 +14,7 @@ namespace Minecraft.NBT
 		ByteArray,
 		String,
 		List,
-		Compound
+		Compound,
+		IntArray
 	}
 }

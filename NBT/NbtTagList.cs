@@ -123,6 +123,7 @@ namespace Minecraft.NBT
 				case NbtTagType.String: str += "TAG_String"; break;
 				case NbtTagType.List: str += "TAG_List"; break;
 				case NbtTagType.Compound: str += "TAG_Compound"; break;
+				case NbtTagType.IntArray: str += "TAG_Int_Array"; break;
 			}
 			if (Count != 0) {
 				str += "\n"+new string(' ', indent*2)+"{\n";

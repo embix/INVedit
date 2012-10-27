@@ -37,8 +37,6 @@ namespace Minecraft.NBT
 		{
 			if (tag == null)
 				throw new ArgumentNullException("tag");
-			if (tag.Type < NbtTagType.Byte || tag.Type > NbtTagType.Compound)
-					throw new FormatException("Unknown TagType '"+(int)tag.Type+"'.");
 			if (writeType) Write((byte)tag.Type);
 			switch (tag.Type) {
 				case NbtTagType.Byte:
@@ -76,6 +74,11 @@ namespace Minecraft.NBT
 						Write(item.Name, item);
 					Write((byte)NbtTagType.End);
 					break;
+				case NbtTagType.IntArray:
+					Write((int[])tag.Value);
+					break;
+				default:
+					throw new FormatException("Unknown TagType '"+(int)tag.Type+"'.");
 			}
 		}
 		
@@ -115,6 +118,12 @@ namespace Minecraft.NBT
 				throw new Exception("String too long.");
 			Write((short)length);
 			_writer.Write(Encoding.UTF8.GetBytes(value));
+		}
+		void Write(int[] value)
+		{
+			Write(value.Length);
+			foreach (int i in value)
+				_writer.Write(i);
 		}
 	}
 }

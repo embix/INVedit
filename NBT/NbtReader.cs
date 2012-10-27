@@ -31,6 +31,7 @@ namespace Minecraft.NBT
 		}
 		public NbtTag Read(NbtTagType type)
 		{
+			int length;
 			switch (type) {
 				case NbtTagType.End:
 					return null;
@@ -47,11 +48,11 @@ namespace Minecraft.NBT
 				case NbtTagType.Double:
 					return NbtTag.Create(_reader.ReadDouble());
 				case NbtTagType.ByteArray:
-					int length = _reader.ReadInt32();
+					length = _reader.ReadInt32();
 					return NbtTag.Create(_reader.ReadBytes(length));
 				case NbtTagType.String:
-					short len = _reader.ReadInt16();
-					byte[] array = _reader.ReadBytes(len);
+					length = _reader.ReadInt16();
+					byte[] array = _reader.ReadBytes(length);
 					return NbtTag.Create(Encoding.UTF8.GetString(array));
 				case NbtTagType.List:
 					NbtTagType listType = (NbtTagType)_reader.ReadByte();
@@ -70,6 +71,12 @@ namespace Minecraft.NBT
 						if (item == null) return compound;
 						compound.Add(name, item);
 					}
+				case NbtTagType.IntArray:
+					length = _reader.ReadInt32();
+					int[] intArray = new int[length];
+					for (int i = 0; i < length; i++)
+						intArray[i] = _reader.ReadInt32();
+					return NbtTag.Create(intArray);
 				default:
 					throw new FormatException("'"+(int)type+"' is not a valid TagType.");
 			}
