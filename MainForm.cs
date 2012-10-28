@@ -118,10 +118,12 @@ namespace INVedit
 				NbtTag root,tag;
 				if (info.Exists) {
 					root = NbtTag.Load(page.file);
+					if (info.Extension.ToLower() == ".dat")
+						CreateBackup(file);
 					tag = root;
 				} else {
 					if (info.Extension.ToLower() == ".dat") {
-						MessageBox.Show("You can't create a new Minecraft level file.\n"+
+						MessageBox.Show("You can't create a new Minecraft level/player file.\n"+
 						                "Select an existing one instead.", "Error",
 						                MessageBoxButtons.OK, MessageBoxIcon.Error);
 						return;
@@ -502,6 +504,14 @@ namespace INVedit
 				Uri uri = new Uri(servers[currentServer][0] + download[current]);
 				clients[currentServer].DownloadDataAsync(uri);
 			}
+		}
+		
+		void CreateBackup(string file)
+		{
+			string backup = Path.ChangeExtension(file, Path.GetExtension(file) + ".backup");
+			if (File.Exists(backup))
+				try { File.Delete(backup); } catch { return; }
+			File.Copy(file, backup);
 		}
 	}
 }
