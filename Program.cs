@@ -24,25 +24,18 @@ namespace INVedit
 				if (arg.Length > 0 && arg[0] == '-') {
 				switch (args[0]) {
 					case "-update":
-						if (File.Exists("NBT.dll")) {
-							while (true) {
-								try { File.Delete("NBT.dll"); break; } catch {  }
-								Thread.Sleep(500);
-							}
-						}
+						if (File.Exists("NBT.dll"))
+							RepeatUntilSuccessful(() => File.Delete("NBT.dll"));
 						if (File.Exists("_INVedit.exe")) {
-							while (true) {
-								try { File.Delete("INVedit.exe"); break; } catch {  }
-								Thread.Sleep(500);
-							} File.Copy("_INVedit.exe", "INVedit.exe");
+							RepeatUntilSuccessful(() => File.Delete("INVedit.exe"));
+							File.Copy("_INVedit.exe", "INVedit.exe");
 							Process.Start("INVedit.exe", "-finish");
 							return;
-						} break;
+						}
+						break;
 					case "-finish":
-						while (true) {
-							try { File.Delete("_INVedit.exe"); break; } catch {  }
-							Thread.Sleep(500);
-						} break;
+						RepeatUntilSuccessful(() => File.Delete("_INVedit.exe"));
+						break;
 				}
 			} else { files.Add(arg); }
 			
@@ -56,6 +49,23 @@ namespace INVedit
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new MainForm(files.ToArray()));
+		}
+		
+		private static void RepeatUntilSuccessful(Action action)
+		{
+			int times = 0;
+			while (true) {
+				try { action(); break; } catch {  }
+				Thread.Sleep(500);
+				if (times++ > 4) {
+					var result = MessageBox.Show("Couldn't update INVedit.\n" +
+					                             "Is another instance of INVedit running?", "Warning",
+					                             MessageBoxButtons.RetryCancel, MessageBoxIcon.Warning);
+					if (result == DialogResult.Cancel)
+						Application.Exit();
+					times = 0;
+				}
+			}
 		}
 	}
 }
