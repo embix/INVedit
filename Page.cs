@@ -45,8 +45,8 @@ namespace INVedit
 			boxDamage = new NumericUpDown();
 			boxDamage.Location = new Point(344, 21);
 			boxDamage.Size = new Size(57, 20);
-			boxDamage.Minimum = -32657;
-			boxDamage.Maximum = 32656;
+			boxDamage.Minimum = -32768;
+			boxDamage.Maximum = 32767;
 			boxDamage.TextAlign = HorizontalAlignment.Right;
 			boxDamage.Enabled = false;
 			boxInventory.Controls.Add(boxDamage);

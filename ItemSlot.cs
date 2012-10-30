@@ -214,7 +214,7 @@ namespace INVedit
 					rect = new Rectangle(5, ClientSize.Height-8, width, 3);
 					g.FillRectangle(new SolidBrush(color), rect);
 				} else {
-					string value = Math.Abs(Item.Damage).ToString();
+					string value = Math.Abs((int)Item.Damage).ToString();
 					Color color1 = Color.FromArgb(56, 0, 0);
 					Color color2 = Color.FromArgb(240, 0, 0);
 					if (Item.Damage < 0) {
