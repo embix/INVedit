@@ -1,4 +1,4 @@
-:version 33
+:version 34
 :mc-version Minecraft 1.4
 
 #            Blocks
@@ -196,8 +196,8 @@
  144  Wooden_Button          special.png  3,3
  145  Head                     items.png  0,14
  146  Anvil                  special.png  3,6    0
- 146  Anvil                  special.png  4,6    1
- 146  Anvil                  special.png  5,6    2
+ 146  Slightly_Damaged_Anvil special.png  4,6    1
+ 146  Very_Damaged_Anvil     special.png  5,6    2
 
 #            Items
 # ID  NAME                   FILE       CORDS  DAMAGE
@@ -282,7 +282,7 @@
  332  Snowball               items.png  14,0   x16
  333  Boat                   items.png  8,8    x1
  334  Leather                items.png  7,6
- 335  Milk                   items.png  13,4
+ 335  Milk                   items.png  13,4   x1
  336  Brick                  items.png  6,1
  337  Clay                   items.png  9,3
  338  Sugar_Canes            items.png  11,1
@@ -356,7 +356,7 @@
  392  Potato                 items.png  7,7
  393  Baked_Potato           items.png  6,7
  394  Poisonous_Potato       items.png  6,8
- 395  Empty_Map              items.png  13,12
+ 395  Empty_Map              items.png  13,12  x1
  396  Golden_Carrot          items.png  6,9
  397  Skeleton_Head          items.png  0,14   0
  397  Wither_Skeleton_Head   items.png  1,14   1
