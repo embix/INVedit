@@ -60,7 +60,7 @@ namespace INVedit
 			this.boxText.Name = "boxText";
 			this.boxText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.boxText.Size = new System.Drawing.Size(303, 109);
-			this.boxText.TabIndex = 5;
+			this.boxText.TabIndex = 6;
 			this.boxText.TextChanged += new System.EventHandler(this.BoxTextTextChanged);
 			// 
 			// btnPrevious
@@ -70,7 +70,7 @@ namespace INVedit
 			this.btnPrevious.Location = new System.Drawing.Point(5, 173);
 			this.btnPrevious.Name = "btnPrevious";
 			this.btnPrevious.Size = new System.Drawing.Size(40, 22);
-			this.btnPrevious.TabIndex = 6;
+			this.btnPrevious.TabIndex = 7;
 			this.btnPrevious.Text = "<<";
 			this.btnPrevious.UseVisualStyleBackColor = true;
 			this.btnPrevious.Click += new System.EventHandler(this.BtnPreviousClick);
@@ -82,7 +82,7 @@ namespace INVedit
 			this.btnNext.Location = new System.Drawing.Point(269, 173);
 			this.btnNext.Name = "btnNext";
 			this.btnNext.Size = new System.Drawing.Size(40, 22);
-			this.btnNext.TabIndex = 7;
+			this.btnNext.TabIndex = 9;
 			this.btnNext.Text = ">>";
 			this.btnNext.UseVisualStyleBackColor = true;
 			this.btnNext.Click += new System.EventHandler(this.BtnNextClick);
@@ -126,7 +126,7 @@ namespace INVedit
 			this.boxSigned.Location = new System.Drawing.Point(255, 31);
 			this.boxSigned.Name = "boxSigned";
 			this.boxSigned.Size = new System.Drawing.Size(54, 24);
-			this.boxSigned.TabIndex = 4;
+			this.boxSigned.TabIndex = 5;
 			this.boxSigned.Text = "Signed";
 			this.boxSigned.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.boxSigned.UseVisualStyleBackColor = true;
@@ -151,14 +151,14 @@ namespace INVedit
 			this.boxAuthor.Location = new System.Drawing.Point(57, 33);
 			this.boxAuthor.Name = "boxAuthor";
 			this.boxAuthor.Size = new System.Drawing.Size(192, 20);
-			this.boxAuthor.TabIndex = 3;
+			this.boxAuthor.TabIndex = 4;
 			// 
 			// label1
 			// 
 			this.label1.Location = new System.Drawing.Point(7, 33);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(46, 18);
-			this.label1.TabIndex = 9;
+			this.label1.TabIndex = 3;
 			this.label1.Text = "Author:";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 

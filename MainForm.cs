@@ -26,6 +26,7 @@ namespace INVedit
 		
 		EnchantForm enchantForm = null;
 		EditForm editForm = null;
+		ItemDataForm itemDataForm = null;
 		List<CheckBox> groups = new List<CheckBox>();
 		
 		string[][] servers = new string[][]{
@@ -324,12 +325,27 @@ namespace INVedit
 			editForm.Show(this);
 		}
 		
+		void BtnItemDataClick(object sender, EventArgs e)
+		{
+			btnItemData.Enabled = false;
+			itemDataForm = new ItemDataForm();
+			itemDataForm.Closed += delegate {
+				btnItemData.Enabled = true;
+				itemDataForm = null;
+			};
+			if (tabControl.SelectedTab != null)
+				itemDataForm.Update(((Page)tabControl.SelectedTab).selected);
+			itemDataForm.Show(this);
+		}
+		
 		void Change(ItemSlot slot)
 		{
 			if (enchantForm != null)
 				enchantForm.Update(slot);
 			if (editForm != null)
 				editForm.Update(slot);
+			if (itemDataForm != null)
+				itemDataForm.Update(slot);
 		}
 		
 		void BtnAboutClick(object sender, EventArgs e)

@@ -155,7 +155,7 @@ namespace INVedit
 			this.MinimizeBox = false;
 			this.Name = "EnchantForm";
 			this.ShowInTaskbar = false;
-			this.Text = "Enchantments";
+			this.Text = "Enchantment Editor";
 			((System.ComponentModel.ISupportInitialize)(this.editLevel)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.editId)).EndInit();
 			this.ResumeLayout(false);

@@ -50,6 +50,7 @@ namespace INVedit
 			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.btnEnchant = new System.Windows.Forms.ToolStripButton();
 			this.btnEdit = new System.Windows.Forms.ToolStripButton();
+			this.btnItemData = new System.Windows.Forms.ToolStripButton();
 			this.labelVersion = new System.Windows.Forms.ToolStripLabel();
 			this.tabControl = new System.Windows.Forms.TabControl();
 			this.boxItems = new System.Windows.Forms.ListView();
@@ -72,6 +73,7 @@ namespace INVedit
 									this.btnUpdate,
 									this.barUpdate,
 									this.toolStripSeparator2,
+									this.btnItemData,
 									this.btnEnchant,
 									this.btnEdit,
 									this.labelVersion});
@@ -185,7 +187,7 @@ namespace INVedit
 			this.btnEnchant.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.btnEnchant.Name = "btnEnchant";
 			this.btnEnchant.Size = new System.Drawing.Size(23, 23);
-			this.btnEnchant.Text = "Enchant";
+			this.btnEnchant.Text = "Enchantment Editor";
 			this.btnEnchant.Click += new System.EventHandler(this.BtnEnchantClick);
 			// 
 			// btnEdit
@@ -197,6 +199,16 @@ namespace INVedit
 			this.btnEdit.Size = new System.Drawing.Size(23, 23);
 			this.btnEdit.Text = "Book Editor";
 			this.btnEdit.Click += new System.EventHandler(this.BtnEditClick);
+			// 
+			// btnItemData
+			// 
+			this.btnItemData.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.btnItemData.Image = ((System.Drawing.Image)(resources.GetObject("btnItemData.Image")));
+			this.btnItemData.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.btnItemData.Name = "btnItemData";
+			this.btnItemData.Size = new System.Drawing.Size(23, 23);
+			this.btnItemData.Text = "Item Editor";
+			this.btnItemData.Click += new System.EventHandler(this.BtnItemDataClick);
 			// 
 			// labelVersion
 			// 
@@ -280,6 +292,7 @@ namespace INVedit
 			this.PerformLayout();
 		}
 		private System.Windows.Forms.ToolStripButton btnEdit;
+		private System.Windows.Forms.ToolStripButton btnItemData;
 		private System.Windows.Forms.ToolStripButton btnEnchant;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
 		private System.Windows.Forms.ToolStripLabel labelVersion;
