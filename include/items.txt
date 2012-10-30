@@ -188,8 +188,8 @@
  136  Jungle_Wood_Stairs     special.png  6,1
  137  Command_Block          terrain.png  8,11
  138  Beacon                 special.png  2,6
- 139  Cobblestone_Walls      special.png  1,2    0
- 140  Moss_Stone_Walls       special.png  0,2    1
+ 139  Cobblestone_Wall       special.png  1,2    0
+ 140  Moss_Stone_Wall        special.png  0,2    1
  141  Flower_Pot             terrain.png  9,11
  142  Carrots                terrain.png  11,12
  143  Potatoes               terrain.png  12,12
@@ -483,7 +483,7 @@
 # NAME      ICON  ITEMS
 # Column 1
 ~ Natural    2     2,3,12,24,128,44~1,13,82,79,80,78
-~ Stone      1     1,4,48,67,44~3,98,109,44~5,44~0,45,108,44~4,101
+~ Stone      1     1,4,48,67,44~3,139,140,98,109,44~5,44~0,45,108,44~4,101
 ~ Wood       5     17,5,53,134,135,136,126,47,85,107,20,102,30
 ~ NetherEnd  87    87,88,89,348,112,114,113,372,121,122
 ~ Ores       56    16,15,14,56,129,73,21,49,42,41,57,133,22,263~0,265,266,264,388
