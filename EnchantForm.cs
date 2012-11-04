@@ -109,8 +109,8 @@ namespace INVedit
 			                                         (tag == null || (short)tag["lvl"] >= 0 && (short)tag["lvl"] <= enchantment.max));
 			bool allow = boxAllow.Checked || enchantment == null || (tag != null && ((short)tag["lvl"] < 0 || (short)tag["lvl"] > enchantment.max));
 			editLevel.Minimum = allow ? -32768 : 0;
-			editLevel.Maximum = allow ? 32767 : enchantment.max;
-			editLevel.Value = (tag != null) ? (short)tag["lvl"] : 0;
+			editLevel.Maximum = allow ? (short)32767 : enchantment.max;
+			editLevel.Value = (tag != null) ? (short)tag["lvl"] : (short)0;
 			
 			boxEnchantments.ItemSelectionChanged += BoxEnchantmentsItemSelectionChanged;
 			editId.ValueChanged += EditIdValueChanged;
@@ -241,7 +241,7 @@ namespace INVedit
 			                                         editLevel.Value >= 0 && editLevel.Value <= enchantment.max);
 			bool allow = boxAllow.Checked || enchantment == null || editLevel.Value < 0 || editLevel.Value > enchantment.max;
 			editLevel.Minimum = allow ? -32768 : 0;
-			editLevel.Maximum = allow ? 32767 : enchantment.max;
+			editLevel.Maximum = allow ? (short)32767 : enchantment.max;
 		}
 		
 		void BoxEnchantmentsKeyDown(object sender, KeyEventArgs e)
