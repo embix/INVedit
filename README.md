@@ -38,6 +38,7 @@ It's public domain, do what you want.
 - [Minecraft][1] sprites, Mojang.
 
 Other / Credits
+---------------
 
 - Thanks to epaGamer for the program icon.
 - Thanks to [PhonicUK][5] for the download / update mirror.
