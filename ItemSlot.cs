@@ -38,17 +38,29 @@ namespace INVedit
 		
 		protected override void OnMouseDown(MouseEventArgs e)
 		{
-			if (e.Button != MouseButtons.Left) return;
-			LostFocus += OnLostFocus;
-			if (Item == null) return;
-			Checked = true;
-			DragBegin();
-			other = Item;
-			DragDropEffects final = DoDragDrop(Item, DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
-			DragEnd();
-			var old = Item;
-			if (final == DragDropEffects.Move) { Item = other; Changed(false); }
-			Checked = false;
+            LostFocus += OnLostFocus;
+            if (Item == null) return;
+            switch (e.Button)
+            {
+                case MouseButtons.Left:
+                    Checked = true;
+                    DragBegin();
+                    other = Item;
+                    DragDropEffects final = DoDragDrop(Item, DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link);
+                    DragEnd();
+                    if (final == DragDropEffects.Move) { Item = other; Changed(false); }
+                    Checked = false;
+                    break;
+                case MouseButtons.Right:
+                    // if ItemSlot contains item, set amount to max/damage to zero
+                    Item.Count = Item.Stack;
+                    if (!Item.Alternative) Item.Damage = 0;
+                    // todo: update Damage, Count
+                    break;
+                default:
+                    break;
+            }
+            Refresh();
 		}
 		
 		void OnLostFocus(object sender, EventArgs e)
